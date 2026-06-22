@@ -1,15 +1,28 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { questions } from '../data/questions';
 import { useI18n, LangToggle } from '../i18n';
 
+function loadAnswers() {
+  try {
+    const saved = sessionStorage.getItem('hdti_answers');
+    return saved ? JSON.parse(saved) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveAnswers(answers) {
+  sessionStorage.setItem('hdti_answers', JSON.stringify(answers));
+}
+
 export default function Quiz() {
   const navigate = useNavigate();
   const { t, language, pickQuestion } = useI18n();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [answers, setAnswers] = useState(loadAnswers);
+  const advanceTimerRef = useRef(null);
 
   const question = questions[currentIndex];
   const localized = useMemo(
@@ -17,22 +30,36 @@ export default function Quiz() {
     [question, language, pickQuestion],
   );
   const totalQuestions = questions.length;
+  const currentKey = `Q${question.id}`;
+  const currentAnswer = answers[currentKey];
 
-  const handleSelect = useCallback((label) => {
-    const key = `Q${question.id}`;
-    setAnswers(prev => ({ ...prev, [key]: label }));
+  useEffect(() => {
+    return () => {
+      if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
+    };
+  }, []);
 
-    setTimeout(() => {
-      if (currentIndex < totalQuestions - 1) {
-        setCurrentIndex(prev => prev + 1);
-      } else {
-        setIsSubmitting(true);
-        const finalAnswers = { ...answers, [key]: label };
-        sessionStorage.setItem('hdti_answers', JSON.stringify(finalAnswers));
-        setTimeout(() => navigate('/result'), 1500);
-      }
-    }, 300);
-  }, [currentIndex, totalQuestions, answers, question.id, navigate]);
+  const handleSelect = useCallback(
+    (label) => {
+      const key = `Q${question.id}`;
+
+      setAnswers((prev) => {
+        const next = { ...prev, [key]: label };
+        saveAnswers(next);
+        return next;
+      });
+
+      if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
+      advanceTimerRef.current = setTimeout(() => {
+        if (currentIndex < totalQuestions - 1) {
+          setCurrentIndex((prev) => prev + 1);
+        } else {
+          navigate('/loading');
+        }
+      }, 300);
+    },
+    [currentIndex, totalQuestions, question.id, navigate],
+  );
 
   const handleProgressClick = (index) => {
     if (index < currentIndex) {
@@ -42,52 +69,49 @@ export default function Quiz() {
 
   const handleBack = () => {
     if (currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
+      setCurrentIndex((prev) => prev - 1);
     } else {
       navigate('/');
     }
   };
 
-  if (isSubmitting) {
-    return (
-      <div className="min-h-dvh flex flex-col items-center justify-center bg-primary-dark text-white px-6">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center"
-        >
-          <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-white/10 flex items-center justify-center text-4xl">
-            🐾
-          </div>
-          <p className="text-lg font-medium mb-4">{t('quiz.submitting')}</p>
-          <div className="w-48 h-1 bg-white/20 rounded-full overflow-hidden mx-auto">
-            <motion.div
-              className="h-full bg-white/80 rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: '100%' }}
-              transition={{ duration: 1.5, ease: 'easeInOut' }}
-            />
-          </div>
-        </motion.div>
-      </div>
-    );
-  }
+  const handlePrev = () => {
+    if (currentIndex > 0) setCurrentIndex((prev) => prev - 1);
+  };
+
+  const handleNext = () => {
+    if (currentAnswer && currentIndex < totalQuestions - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    }
+  };
 
   return (
     <div className="min-h-dvh flex flex-col bg-bg-page">
       <div className="sticky top-0 z-10 bg-bg-page/95 backdrop-blur-sm px-4 py-3 flex items-center gap-3">
-        <button onClick={handleBack} className="text-text-muted hover:text-text-primary p-1 cursor-pointer">
+        <button
+          onClick={handleBack}
+          className="text-text-muted hover:text-text-primary p-1 cursor-pointer"
+        >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M12 4L6 10L12 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path
+              d="M12 4L6 10L12 16"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
 
         <div className="flex-1 flex items-center gap-1">
-          {questions.map((_, i) => (
+          {questions.map((q, i) => (
             <button
-              key={i}
+              key={q.id}
               onClick={() => handleProgressClick(i)}
-              className={`h-1.5 flex-1 rounded-full transition-colors cursor-pointer ${
+              disabled={i >= currentIndex}
+              className={`h-1.5 flex-1 rounded-full transition-colors ${
+                i < currentIndex ? 'cursor-pointer' : 'cursor-default'
+              } ${
                 i < currentIndex
                   ? 'bg-primary'
                   : i === currentIndex
@@ -105,7 +129,7 @@ export default function Quiz() {
         <LangToggle />
       </div>
 
-      <div className="flex-1 px-5 py-6 flex flex-col max-w-lg mx-auto w-full">
+      <div className="flex-1 px-5 py-6 flex flex-col max-w-lg mx-auto w-full pb-28">
         <AnimatePresence mode="wait">
           <motion.div
             key={`${question.id}-${language}`}
@@ -125,7 +149,7 @@ export default function Quiz() {
 
             <div className="space-y-3 mt-auto">
               {localized.options.map((opt, i) => {
-                const isSelected = answers[`Q${question.id}`] === opt.label;
+                const isSelected = currentAnswer === opt.label;
                 return (
                   <motion.button
                     key={opt.label}
@@ -140,7 +164,11 @@ export default function Quiz() {
                     <div className="flex items-start gap-3">
                       <span className="text-lg flex-shrink-0">{question.emoji[i]}</span>
                       <div className="flex-1 min-w-0">
-                        <p className={`text-sm leading-relaxed ${isSelected ? 'text-primary-dark font-medium' : 'text-text-primary'}`}>
+                        <p
+                          className={`text-sm leading-relaxed ${
+                            isSelected ? 'text-primary-dark font-medium' : 'text-text-primary'
+                          }`}
+                        >
                           {opt.text}
                         </p>
                       </div>
@@ -158,6 +186,25 @@ export default function Quiz() {
         <p className="text-center text-xs text-text-muted mt-6">
           {t('quiz.hint')}
         </p>
+      </div>
+
+      <div className="fixed bottom-0 inset-x-0 z-10 bg-bg-page/95 backdrop-blur-sm border-t border-border px-5 py-4">
+        <div className="max-w-lg mx-auto flex gap-3">
+          <button
+            onClick={handlePrev}
+            disabled={currentIndex === 0}
+            className="flex-1 py-3 rounded-[18px] border border-border-button bg-bg-card text-text-body text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed hover:border-primary-light cursor-pointer"
+          >
+            {t('quiz.prev')}
+          </button>
+          <button
+            onClick={handleNext}
+            disabled={!currentAnswer || currentIndex >= totalQuestions - 1}
+            className="flex-1 py-3 rounded-[18px] bg-primary text-white text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed hover:bg-primary-dark cursor-pointer"
+          >
+            {t('quiz.next')}
+          </button>
+        </div>
       </div>
     </div>
   );
