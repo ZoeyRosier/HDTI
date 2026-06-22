@@ -3,14 +3,14 @@ export const questions = [
     id: 1,
     type: "situation",
     parity: "odd",
-    text: `清晨离开休息点巡视四周时，你会先：`,
-    en: `Leaving your resting spot at dawn, you first...`,
+    text: `天刚亮，离开昨晚的落脚点，你会先：`,
+    en: `Just after dawn, leaving last night's resting spot, you first...`,
     emoji: ["📡", "🗺️", "🌄", "🌿"],
     options: [
       { label: "A", text: `发出信号，先和附近同伴对上"频道"`, en: `Signal to nearby companions first`, animal: "滇金丝猴" },
       { label: "B", text: `看好路线，判断怎样行动最有效率`, en: `Scout the route for maximum efficiency`, animal: "豺" },
       { label: "C", text: `先去开阔点，确保视野够大`, en: `Head to high ground for a wider view`, animal: "黑颈鹤" },
-      { label: "D", text: `一声不响沿边线移动，先不暴露自己`, en: `Move silently along the edge, stay hidden`, animal: "雪豹" }
+      { label: "D", text: `沿着不显眼的边线移动，先不暴露自己`, en: `Move along unnoticed edges, stay hidden first`, animal: "雪豹" }
     ]
   },
   {
@@ -37,8 +37,8 @@ export const questions = [
     options: [
       { label: "A", text: `先让同伴知道，消息共享最重要`, en: `Tell companions first — sharing info matters most`, animal: "滇金丝猴" },
       { label: "B", text: `看能不能配合起来，把资源拿得更稳`, en: `See if coordinating with others gets more`, animal: "豺" },
-      { label: "C", text: `先保持一点距离，确认周围动静`, en: `Keep distance and check the surroundings first`, animal: "黑颈鹤" },
-      { label: "D", text: `先伏低观察，等最合适的时候再靠近`, en: `Crouch and observe, approach at the right moment`, animal: "雪豹" }
+      { label: "C", text: `保持距离观察一会儿，确认周围没有陷阱`, en: `Keep distance and observe — make sure there's no trap`, animal: "黑颈鹤" },
+      { label: "D", text: `先伏低观察，等最合适的时候再无声靠近`, en: `Crouch and observe, then approach silently at the right moment`, animal: "雪豹" }
     ]
   },
   {
@@ -50,9 +50,9 @@ export const questions = [
     emoji: ["🌳", "💪", "💨", "🧱"],
     options: [
       { label: "A", text: `先上树，换到更安全的位置`, en: `Climb up, get to a safer position`, animal: "小熊猫" },
-      { label: "B", text: `先把气势顶出来，让对方知道别乱来`, en: `Stand your ground and show you mean business`, animal: "亚洲黑熊" },
+      { label: "B", text: `先把气势亮出来，让对方知道别乱来`, en: `Show your presence — let them know not to mess around`, animal: "亚洲黑熊" },
       { label: "C", text: `轻快撤开，不和风险正面对撞`, en: `Slip away quickly, avoid direct confrontation`, animal: "林麝" },
-      { label: "D", text: `先稳住阵脚，别自己先乱`, en: `Stay calm, don't panic`, animal: "羚牛" }
+      { label: "D", text: `先稳住阵脚，不因为惊吓就乱了节奏`, en: `Hold your ground — don't let the startle break your rhythm`, animal: "羚牛" }
     ]
   },
   {
@@ -63,10 +63,10 @@ export const questions = [
     en: `You need to cross unfamiliar territory. You most likely...`,
     emoji: ["🌿", "👥", "🔭", "🪨"],
     options: [
-      { label: "A", text: `走高处，利用树与树之间的通道`, en: `Take the high route through the treetops`, animal: "滇金丝猴" },
+      { label: "A", text: `走高处，利用树冠之间的通道快速通过`, en: `Take the high route through the tree canopy`, animal: "滇金丝猴" },
       { label: "B", text: `找适合一起推进的路线`, en: `Find a route that works for the whole group`, animal: "豺" },
-      { label: "C", text: `选方便提前发现风险的开阔路段`, en: `Choose open ground where you can spot danger early`, animal: "黑颈鹤" },
-      { label: "D", text: `贴着掩体和地形边缘走`, en: `Hug cover and terrain edges`, animal: "雪豹" }
+      { label: "C", text: `选开阔路段，方便提前发现任何风吹草动`, en: `Choose open ground to catch any movement early`, animal: "黑颈鹤" },
+      { label: "D", text: `贴着地形边缘和掩体走，把自己藏进阴影里`, en: `Hug terrain edges and cover, blend into the shadows`, animal: "雪豹" }
     ]
   },
   {
@@ -87,11 +87,11 @@ export const questions = [
     id: 7,
     type: "situation",
     parity: "odd",
-    text: `如果同伴或附近个体突然出状况，你会：`,
-    en: `A companion suddenly gets into trouble. You...`,
+    text: `附近同伴突然发出状况信号，你会：`,
+    en: `A nearby companion suddenly signals trouble. You...`,
     emoji: ["📍", "⚡", "👀", "🤫"],
     options: [
-      { label: "A", text: `先呼应、定位，确保彼此知道位置`, en: `Call out, locate each other, stay connected`, animal: "滇金丝猴" },
+      { label: "A", text: `立即回应定位，确保彼此都知道对方在哪`, en: `Respond immediately — make sure you both know where the other is`, animal: "滇金丝猴" },
       { label: "B", text: `迅速进入协作状态，该配合就配合`, en: `Jump into action, coordinate immediately`, animal: "豺" },
       { label: "C", text: `拉开警戒距离，保证自己能看清全局`, en: `Keep a watchful distance, assess the full picture`, animal: "黑颈鹤" },
       { label: "D", text: `自己悄悄靠近处理，不想惊动太多`, en: `Quietly handle it yourself, without stirring things up`, animal: "雪豹" }
@@ -105,10 +105,10 @@ export const questions = [
     en: `Day is ending. You most want to settle in...`,
     emoji: ["☁️", "🥜", "🌑", "⛰️"],
     options: [
-      { label: "A", text: `高一点、软一点、舒服一点的地方`, en: `Somewhere high, soft, and comfortable`, animal: "小熊猫" },
-      { label: "B", text: `靠近资源、明天也方便继续找吃的地方`, en: `Close to food sources, easy to continue tomorrow`, animal: "亚洲黑熊" },
-      { label: "C", text: `最不容易被发现的地方`, en: `The place least likely to be found`, animal: "林麝" },
-      { label: "D", text: `地形稳、退路清楚的地方`, en: `Stable terrain with clear escape routes`, animal: "羚牛" }
+      { label: "A", text: `高一点、软一点、舒服到不想动的地方`, en: `Somewhere high, soft, and comfortable enough to never want to move`, animal: "小熊猫" },
+      { label: "B", text: `靠近资源，明天一睁眼就能继续干饭的地方`, en: `Close to food — wake up and get straight back to eating`, animal: "亚洲黑熊" },
+      { label: "C", text: `最不容易被发现的隐蔽角落`, en: `The most hidden, hardest-to-find corner around`, animal: "林麝" },
+      { label: "D", text: `地形稳、退路清楚、能扛住任何变化的地方`, en: `Stable terrain, clear exits, built to handle anything`, animal: "羚牛" }
     ]
   },
   {
@@ -164,7 +164,7 @@ export const questions = [
       { label: "A", text: `被迫一直高强度运转，连休息都不行`, en: `Forced to run at full speed with no rest`, animal: "小熊猫" },
       { label: "B", text: `到嘴的东西突然没了`, en: `Having something taken right before you get it`, animal: "亚洲黑熊" },
       { label: "C", text: `自己的踪迹被轻易暴露`, en: `Your whereabouts easily exposed`, animal: "林麝" },
-      { label: "D", text: `节奏乱掉，影响整体状态`, en: `Losing your rhythm, disrupting your whole state`, animal: "羚牛" }
+      { label: "D", text: `整体节奏被打乱，害得后面一路都不稳`, en: `Losing your overall rhythm and being off-balance the whole way after`, animal: "羚牛" }
     ]
   },
   {
@@ -177,8 +177,8 @@ export const questions = [
     options: [
       { label: "A", text: `先把大家聚到能互相照应的位置`, en: `Get everyone into a position where they can look out for each other`, animal: "滇金丝猴" },
       { label: "B", text: `先顶住麻烦，别让它继续靠近`, en: `Block the threat, don't let it get closer`, animal: "豺" },
-      { label: "C", text: `优先带进更安全的开阔/警戒区`, en: `Lead to safer open or watchable ground first`, animal: "黑颈鹤" },
-      { label: "D", text: `沿着最稳妥的路线悄悄带走`, en: `Quietly take the safest route away`, animal: "雪豹" }
+      { label: "C", text: `先带到视野更清楚、能提前发现危险的区域`, en: `Move to clearer ground where danger can be spotted early`, animal: "黑颈鹤" },
+      { label: "D", text: `沿最稳妥、最不容易惊动别人的路线悄悄带走`, en: `Quietly take the most careful route — minimal disturbance`, animal: "雪豹" }
     ]
   },
   {
@@ -189,10 +189,10 @@ export const questions = [
     en: `Arriving somewhere new, your first focus is...`,
     emoji: ["🛏️", "🍎", "🌫️", "🗺️"],
     options: [
-      { label: "A", text: `哪儿适合落脚休息`, en: `Where to rest and settle in`, animal: "小熊猫" },
-      { label: "B", text: `哪儿最可能有吃的`, en: `Where food is most likely to be found`, animal: "亚洲黑熊" },
-      { label: "C", text: `哪儿能躲、能撤、能不被看见`, en: `Where to hide, retreat, and stay invisible`, animal: "林麝" },
-      { label: "D", text: `哪条路最稳、最能扛环境变化`, en: `Which path is most stable and resilient`, animal: "羚牛" }
+      { label: "A", text: `哪儿适合落脚休息，待着舒服`, en: `Where to rest comfortably and settle in`, animal: "小熊猫" },
+      { label: "B", text: `哪儿最可能有吃的，先把基本生存顾住`, en: `Where food is most likely — cover the basics first`, animal: "亚洲黑熊" },
+      { label: "C", text: `哪儿方便藏、方便撤、最好还不容易被发现`, en: `Where to hide, retreat, and ideally stay undetected`, animal: "林麝" },
+      { label: "D", text: `哪条路径最稳，能扛天气，也能扛突发情况`, en: `Which path holds up — against weather and the unexpected`, animal: "羚牛" }
     ]
   },
   {
@@ -203,8 +203,8 @@ export const questions = [
     en: `Which 'shining moment' is most like you?`,
     emoji: ["🎉", "✅", "👁️‍🗨️", "🌫️"],
     options: [
-      { label: "A", text: `一群伙伴都在，而我最会把气氛带起来`, en: `Everyone's together and I'm the one who fires things up`, animal: "滇金丝猴" },
-      { label: "B", text: `一次配合下来，事情稳稳搞定`, en: `One smooth coordination and things just get done`, animal: "豺" },
+      { label: "A", text: `有点要冷掉的场子，被我重新接住了`, en: `A fading vibe — and I caught it before it dropped`, animal: "滇金丝猴" },
+      { label: "B", text: `一轮配合下来，事情稳稳往前推进`, en: `One round of coordination and things steadily move forward`, animal: "豺" },
       { label: "C", text: `我一出现，周围立刻安静下来开始注意我`, en: `When I appear, everything quiets and attention turns to me`, animal: "黑颈鹤" },
       { label: "D", text: `没人看清我，但结果已经决定了`, en: `No one saw me coming, but the outcome was already set`, animal: "雪豹" }
     ]
@@ -217,10 +217,29 @@ export const questions = [
     en: `If you actually lived in the Hengduan Mountains, you'd most likely be...`,
     emoji: ["🌿", "🍖", "🌬️", "⛰️"],
     options: [
-      { label: "A", text: `慢热又会享受的树上住民`, en: `A slow-warming, comfort-loving tree dweller`, animal: "小熊猫" },
-      { label: "B", text: `不好惹的林中干饭派`, en: `The forest's no-nonsense eating machine`, animal: "亚洲黑熊" },
-      { label: "C", text: `轻盈、警觉、距离感刚刚好的观察者`, en: `Light-footed, watchful, perfectly distanced observer`, animal: "林麝" },
-      { label: "D", text: `稳得住场面的高山生存派`, en: `The steady, unshakeable mountain survivor`, animal: "羚牛" }
+      { label: "A", text: `慢热、低耗、把日子过舒服的树上住民`, en: `Slow to warm up, low on energy use, living comfortably in the trees`, animal: "小熊猫" },
+      { label: "B", text: `边界明确、谁碰底线谁难受的林中干饭派`, en: `Clear boundaries — cross the line and feel it, forest edition`, animal: "亚洲黑熊" },
+      { label: "C", text: `轻、警觉、随时能退到安全距离的隐身观察者`, en: `Light, alert, always ready to pull back to a safe distance`, animal: "林麝" },
+      { label: "D", text: `抗压、稳场、环境再硬也能顶住的高山生存派`, en: `Pressure-resistant, steady — holds up no matter how harsh the terrain`, animal: "羚牛" }
     ]
   }
 ];
+
+export const optionVectors = {
+  Q1:  { A: [2,2,3,3,2,1,2], B: [3,2,2,2,3,2,3], C: [3,2,2,2,2,2,3], D: [2,1,1,1,2,2,2] },
+  Q2:  { A: [1,1,1,1,1,1,1], B: [1,2,1,1,2,3,2], C: [1,1,1,1,2,1,1], D: [2,2,2,1,2,2,1] },
+  Q3:  { A: [2,2,3,3,2,1,2], B: [2,2,3,3,3,3,2], C: [2,2,1,1,1,2,3], D: [1,1,1,1,1,2,2] },
+  Q4:  { A: [1,1,1,1,2,1,2], B: [2,3,1,2,2,3,2], C: [1,1,1,1,2,1,1], D: [2,2,2,1,1,2,1] },
+  Q5:  { A: [2,2,2,2,2,1,3], B: [3,2,3,3,3,2,3], C: [3,2,1,2,2,2,3], D: [2,1,1,1,2,2,2] },
+  Q6:  { A: [1,1,1,1,1,1,1], B: [2,2,1,1,3,3,3], C: [1,1,1,1,1,1,1], D: [2,2,2,1,2,2,1] },
+  Q7:  { A: [2,2,3,3,2,1,2], B: [2,3,3,3,3,2,2], C: [2,2,2,2,2,2,3], D: [2,2,1,1,2,2,2] },
+  Q8:  { A: [1,1,1,1,1,1,1], B: [2,2,1,1,3,3,2], C: [1,1,1,1,1,1,1], D: [2,2,2,1,2,2,1] },
+  Q9:  { A: [2,2,3,3,2,1,2], B: [2,3,3,3,3,3,2], C: [3,2,1,2,2,2,3], D: [1,1,1,1,1,2,2] },
+  Q10: { A: [1,1,1,1,2,1,2], B: [2,3,2,2,3,3,2], C: [1,1,1,1,1,1,2], D: [2,3,2,2,2,3,2] },
+  Q11: { A: [2,2,3,3,2,1,2], B: [3,3,3,3,3,3,2], C: [3,2,2,2,2,2,3], D: [2,2,1,1,2,3,3] },
+  Q12: { A: [1,1,1,1,1,1,1], B: [2,3,1,1,3,3,2], C: [1,1,1,1,1,1,2], D: [2,2,2,1,2,2,1] },
+  Q13: { A: [2,2,3,3,2,1,2], B: [2,3,3,3,3,3,2], C: [3,2,2,2,2,2,3], D: [2,1,1,1,2,2,1] },
+  Q14: { A: [1,1,1,1,1,1,1], B: [2,2,1,1,3,3,3], C: [1,1,1,1,1,1,2], D: [2,2,2,1,2,2,1] },
+  Q15: { A: [2,2,3,3,2,1,2], B: [2,3,3,3,3,3,2], C: [3,2,2,2,2,2,3], D: [1,2,1,1,2,3,3] },
+  Q16: { A: [1,1,1,1,1,1,2], B: [2,3,1,1,3,3,3], C: [1,1,1,1,1,1,2], D: [2,2,2,1,2,2,1] },
+};

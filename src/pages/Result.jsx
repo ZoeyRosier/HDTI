@@ -1,8 +1,8 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { animalsMap, animalNameToId } from '../data/animals';
-import { calculateResult, calculateMatchRateFromScores } from '../utils/scoring';
+import { motion, AnimatePresence } from 'framer-motion';
+import { animalsMap } from '../data/animals';
+import { calculateResult } from '../utils/scoring';
 import { readResultFromUrl, shareResult } from '../utils/share';
 import { incrementAnimalCount, getAllCounts } from '../utils/supabase';
 
@@ -27,11 +27,9 @@ export default function Result() {
     if (answersStr) {
       const answers = JSON.parse(answersStr);
       if (Object.keys(answers).length === 16) {
-        const { result, isEgg, eggType, scores } = calculateResult(answers);
-        const animalId = animalNameToId[result];
-        const animal = animalsMap[animalId];
-        const matchRate = calculateMatchRateFromScores(result, scores);
-        return { animal, matchRate, isSharedView: false, isEgg, eggType, scores };
+        const { result, isEgg, eggType, matchRate, userVec } = calculateResult(answers);
+        const animal = animalsMap[result];
+        return { animal, matchRate, isSharedView: false, isEgg, eggType, userVec };
       }
     }
 
