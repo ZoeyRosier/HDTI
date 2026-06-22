@@ -5,15 +5,15 @@ import { animalsMap } from '../data/animals';
 import { calculateResult } from '../utils/scoring';
 import { readResultFromUrl, shareResult } from '../utils/share';
 import { incrementAnimalCount, getAllCounts } from '../utils/supabase';
+import { useI18n, LangToggle } from '../i18n';
 
 export default function Result() {
   const navigate = useNavigate();
+  const { t, language, pickAnimal } = useI18n();
   const [stats, setStats] = useState(null);
   const [copyToast, setCopyToast] = useState(false);
 
-  // Determine result source
   const resultData = useMemo(() => {
-    // Priority 1: URL params (shared view)
     const urlResult = readResultFromUrl();
     if (urlResult) {
       const animal = animalsMap[urlResult.animalId];
@@ -22,7 +22,6 @@ export default function Result() {
       }
     }
 
-    // Priority 2: sessionStorage (just completed quiz)
     const answersStr = sessionStorage.getItem('hdti_answers');
     if (answersStr) {
       const answers = JSON.parse(answersStr);
@@ -36,6 +35,11 @@ export default function Result() {
     return null;
   }, []);
 
+  const animal = useMemo(
+    () => (resultData ? pickAnimal(resultData.animal) : null),
+    [resultData, language, pickAnimal],
+  );
+
   useEffect(() => {
     if (!resultData) {
       navigate('/');
@@ -43,7 +47,6 @@ export default function Result() {
     }
 
     if (!resultData.isSharedView) {
-      // Save to localStorage
       localStorage.setItem('hdti_result', JSON.stringify({
         animalId: resultData.animal.id,
         animalCode: resultData.animal.code,
@@ -51,7 +54,6 @@ export default function Result() {
         timestamp: Date.now()
       }));
 
-      // Increment count in Supabase
       incrementAnimalCount(resultData.animal.id).then(myCount => {
         if (myCount !== null) {
           getAllCounts().then(allCounts => {
@@ -70,28 +72,43 @@ export default function Result() {
     }
   }, [resultData, navigate]);
 
-  if (!resultData) return null;
+  if (!resultData || !animal) return null;
 
-  const { animal, matchRate, isSharedView } = resultData;
+  const { matchRate, isSharedView } = resultData;
 
-  // For extreme forms, get science content from base animal
-  const scienceAnimal = animal.reuseScienceFrom
+  const scienceSource = animal.reuseScienceFrom
     ? animalsMap[animal.reuseScienceFrom]
     : animal;
+  const scienceAnimal = pickAnimal(scienceSource);
   const species = scienceAnimal?.species;
 
   async function handleShare() {
-    const result = await shareResult(animal.name, animal.code, matchRate, animal.id);
+    const result = await shareResult({
+      animalName: animal.name,
+      animalCode: animal.code,
+      matchRate,
+      animalId: animal.id,
+      t,
+    });
     if (result.method === 'clipboard') {
       setCopyToast(true);
       setTimeout(() => setCopyToast(false), 2000);
     }
   }
 
+  const eggLabel = animal.eggType === 'hidden'
+    ? t('result.eggHidden')
+    : animal.eggType === 'extreme'
+    ? t('result.eggExtreme')
+    : t('result.eggCombo');
+
   return (
     <div className="min-h-dvh">
-      {/* First screen — personality hero */}
       <div className="min-h-dvh bg-primary-dark text-white px-6 py-10 flex flex-col items-center justify-center relative">
+        <div className="absolute top-3 right-3 md:top-4 md:right-4 z-10">
+          <LangToggle variant="dark" />
+        </div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -100,23 +117,20 @@ export default function Result() {
         >
           {isSharedView && (
             <span className="inline-block bg-white/10 text-white/70 text-xs px-3 py-1 rounded-full mb-4">
-              朋友的测试结果
+              {t('result.sharedBadge')}
             </span>
           )}
 
           {animal.isEgg && (
             <span className="inline-block bg-accent-warm/20 text-accent-warm text-xs px-3 py-1 rounded-full mb-4">
-              {animal.eggType === 'hidden' ? '🎉 你触发了隐藏彩蛋' :
-               animal.eggType === 'extreme' ? '⚡ 极致形态解锁' :
-               '✨ 隐藏彩蛋解锁'}
+              {eggLabel}
             </span>
           )}
 
           <p className="text-xs uppercase tracking-[0.2em] text-white/50 mb-6">
-            YOUR HENGDUAN ANIMAL
+            {t('result.heroLabel')}
           </p>
 
-          {/* Animal illustration placeholder */}
           <div className="w-36 h-36 mx-auto mb-6 rounded-full bg-white/10 flex items-center justify-center">
             <span className="text-5xl font-mono font-bold text-white/30">
               {animal.code.charAt(0)}
@@ -125,10 +139,9 @@ export default function Result() {
 
           <h1 className="text-2xl font-bold mb-1">{animal.personalityName}</h1>
           <p className="font-mono text-sm tracking-widest text-white/70 mb-4">
-            {animal.code} · {animal.name} {animal.nameEn}
+            {animal.code} · {animal.name}
           </p>
 
-          {/* Tags */}
           <div className="flex flex-wrap justify-center gap-2 mb-5">
             {animal.tags.map(tag => (
               <span key={tag} className="bg-white/10 text-white/80 text-xs px-2.5 py-1 rounded-full">
@@ -137,14 +150,14 @@ export default function Result() {
             ))}
           </div>
 
-          {/* Quote */}
           <p className="text-base italic text-white/90 mb-6">
-            「{animal.quote}」
+            {t('result.quote', { quote: animal.quote })}
           </p>
 
-          {/* Match rate */}
           <div className="bg-white/5 rounded-xl p-4 mb-4">
-            <p className="text-xs text-white/60 mb-2">与{animal.name}的匹配度</p>
+            <p className="text-xs text-white/60 mb-2">
+              {t('result.matchWith', { name: animal.name })}
+            </p>
             <div className="flex items-center gap-3">
               <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
                 <motion.div
@@ -160,25 +173,22 @@ export default function Result() {
 
           {stats && stats.percentage && (
             <p className="text-xs text-white/50">
-              🏅 仅 {stats.percentage}% 的人测出了{animal.name}
+              {t('result.rarity', { percent: stats.percentage, name: animal.name })}
             </p>
           )}
 
-          {/* Scroll hint */}
           <motion.p
             className="text-xs text-white/40 mt-8"
             animate={{ y: [0, 4, 0] }}
             transition={{ repeat: Infinity, duration: 1.5 }}
           >
-            ↓ 向下了解这只动物
+            {t('result.scrollHint')}
           </motion.p>
         </motion.div>
       </div>
 
-      {/* Second screen — science & data */}
       <div className="bg-bg-page px-6 py-10">
         <div className="max-w-md mx-auto space-y-8">
-          {/* Data comparison */}
           {stats && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -187,58 +197,60 @@ export default function Result() {
               className="bg-bg-card rounded-2xl p-6 border border-border text-center"
             >
               <p className="text-text-secondary text-sm">
-                已有 <span className="font-mono text-2xl font-bold text-text-primary">{stats.myCount.toLocaleString()}</span> 人测出了{animal.name}
+                {t('result.statsCount', {
+                  count: stats.myCount.toLocaleString(),
+                  name: animal.name,
+                })}
               </p>
               <div className="w-12 h-px bg-border mx-auto my-4" />
               <p className="text-text-primary font-medium">
-                而野外，只剩约 <span className="font-mono text-xl text-accent-warm">{animal.wildPopulation}</span>
+                {t('result.statsWild', { population: animal.wildPopulation })}
               </p>
               <p className="text-text-muted text-xs mt-3">
-                你是第 {stats.myCount.toLocaleString()} 个{animal.name}
+                {t('result.statsRank', {
+                  count: stats.myCount.toLocaleString(),
+                  name: animal.name,
+                })}
               </p>
             </motion.div>
           )}
 
-          {/* Personality description */}
           <div>
-            <h3 className="text-sm font-medium text-text-muted mb-3">你的横断山原型</h3>
-            <p className="text-text-primary text-sm leading-relaxed">
+            <h3 className="text-sm font-medium text-text-muted mb-3">{t('result.archetype')}</h3>
+            <p className="text-text-primary text-sm leading-relaxed whitespace-pre-line">
               {animal.personalityDesc}
             </p>
           </div>
 
-          {/* Science cards */}
           {species && (
             <div className="space-y-3">
-              <ScienceCard emoji="🏔" title="物种档案" content={species.habitat} />
-              <ScienceCard emoji="🧗" title="生存绝技" content={species.skill} />
-              <ScienceCard emoji="💡" title="冷知识" content={species.funFact} defaultOpen />
+              <ScienceCard emoji="🏔" title={t('result.speciesProfile')} content={species.habitat} />
+              <ScienceCard emoji="🧗" title={t('result.survivalSkill')} content={species.skill} />
+              <ScienceCard emoji="💡" title={t('result.funFact')} content={species.funFact} defaultOpen />
               <ScienceCard
                 emoji="🚨"
-                title="保护现状"
+                title={t('result.conservation')}
                 content={species.statusDesc}
                 badge={animal.conservationStatus}
               />
             </div>
           )}
 
-          {/* IUCN link */}
           <a
             href={animal.iucnUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="block text-center text-xs text-primary hover:text-primary-dark transition-colors"
           >
-            查看IUCN官方数据 →
+            {t('result.iucnLink')}
           </a>
 
-          {/* Action buttons */}
           <div className="space-y-3 pt-4">
             <button
               onClick={handleShare}
               className="w-full bg-primary text-white py-3.5 rounded-xl font-medium hover:bg-primary-dark transition-colors cursor-pointer"
             >
-              📤 分享给朋友
+              {t('result.share')}
             </button>
 
             <div className="flex gap-3">
@@ -246,14 +258,14 @@ export default function Result() {
                 onClick={() => { sessionStorage.removeItem('hdti_answers'); navigate('/'); }}
                 className="flex-1 bg-bg-card border border-border text-text-secondary py-3 rounded-xl text-sm hover:border-primary-light transition-colors cursor-pointer"
               >
-                🔄 再测一次
+                {t('result.retake')}
               </button>
               {!isSharedView && (
                 <button
                   onClick={() => navigate('/')}
                   className="flex-1 bg-bg-card border border-border text-text-secondary py-3 rounded-xl text-sm hover:border-primary-light transition-colors cursor-pointer"
                 >
-                  🐾 首页
+                  {t('result.home')}
                 </button>
               )}
               {isSharedView && (
@@ -261,7 +273,7 @@ export default function Result() {
                   onClick={() => { sessionStorage.removeItem('hdti_answers'); navigate('/'); }}
                   className="flex-1 bg-bg-card border border-border text-text-secondary py-3 rounded-xl text-sm hover:border-primary-light transition-colors cursor-pointer"
                 >
-                  ✦ 我也要测
+                  {t('result.iWantTest')}
                 </button>
               )}
             </div>
@@ -269,7 +281,6 @@ export default function Result() {
         </div>
       </div>
 
-      {/* Toast */}
       <AnimatePresence>
         {copyToast && (
           <motion.div
@@ -278,7 +289,7 @@ export default function Result() {
             exit={{ opacity: 0, y: 20 }}
             className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-text-primary text-white text-sm px-4 py-2 rounded-lg shadow-lg"
           >
-            链接已复制 ✓
+            {t('result.linkCopied')}
           </motion.div>
         )}
       </AnimatePresence>
