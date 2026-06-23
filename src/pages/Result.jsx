@@ -5,6 +5,7 @@ import { animalsMap, animals } from '../data/animals';
 import { calculateResult, vecToLabel, getDimensionDesc, calcMatchRate } from '../utils/scoring';
 import { readResultFromUrl, shareResult } from '../utils/share';
 import { incrementAnimalCount, getAllCounts } from '../utils/supabase';
+import { generatePoster } from '../utils/poster';
 
 /** 7维度定义：分为4个模型类别 */
 const DIMENSIONS = [
@@ -40,13 +41,15 @@ export default function Result() {
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [copyToast, setCopyToast] = useState(false);
+  const [posterUrl, setPosterUrl] = useState(null);
+  const [posterLoading, setPosterLoading] = useState(false);
 
   const resultData = useMemo(() => {
     const urlResult = readResultFromUrl();
     if (urlResult) {
       const animal = animalsMap[urlResult.animalId];
       if (animal) {
-        return { animal, matchRate: urlResult.matchRate, isSharedView: true };
+        return { animal, matchRate: urlResult.matchRate, isSharedView: true, isPreview: urlResult.isPreview };
       }
     }
 
@@ -68,6 +71,9 @@ export default function Result() {
       navigate('/');
       return;
     }
+
+    // 预览模式不计数、不加载统计
+    if (resultData.isPreview) return;
 
     if (!resultData.isSharedView) {
       localStorage.setItem('hdti_result', JSON.stringify({
@@ -110,7 +116,7 @@ export default function Result() {
 
   if (!resultData) return null;
 
-  const { animal, matchRate, isSharedView, isEgg, userVec } = resultData;
+  const { animal, matchRate, isSharedView, isEgg, userVec, isPreview } = resultData;
   const isEggResult = animal.isEgg;
 
   // 各彩蛋动物独立配色，普通版绿色
@@ -128,11 +134,30 @@ export default function Result() {
   const species = scienceAnimal?.species;
 
   async function handleShare() {
-    const result = await shareResult(animal.name, animal.code, matchRate, animal.id);
-    if (result.method === 'clipboard') {
-      setCopyToast(true);
-      setTimeout(() => setCopyToast(false), 2000);
+    setPosterLoading(true);
+    try {
+      const homeUrl = `${window.location.origin}/`;
+      const url = await generatePoster({ animal, matchRate, homeUrl, stats });
+      setPosterUrl(url);
+    } catch (e) {
+      console.error('海报生成失败', e);
+      // 降级为文字分享
+      const result = await shareResult(animal.name, animal.code, matchRate, animal.id);
+      if (result.method === 'clipboard') {
+        setCopyToast(true);
+        setTimeout(() => setCopyToast(false), 2000);
+      }
+    } finally {
+      setPosterLoading(false);
     }
+  }
+
+  function handleDownloadPoster() {
+    if (!posterUrl) return;
+    const a = document.createElement('a');
+    a.href = posterUrl;
+    a.download = `HDTI_${animal.code}_海报.png`;
+    a.click();
   }
 
   return (
@@ -149,7 +174,7 @@ export default function Result() {
             <span className="text-xs text-white/60">首页</span>
           </div>
           <span className="font-mono text-xs text-white/50 tracking-wide">
-            {isEggResult ? '彩蛋结果 · EGG' : '测试结果 · RESULT'}
+            {isPreview ? '动物档案 · PROFILE' : isEggResult ? '彩蛋结果 · EGG' : '测试结果 · RESULT'}
           </span>
         </div>
 
@@ -250,6 +275,7 @@ export default function Result() {
           </div>
 
           {/* 匹配度 */}
+          {!isPreview && (
           <div className="mb-5">
             <div className="flex justify-between items-baseline mb-2">
               <span className="text-sm text-white/70">与{animal.name}的匹配度</span>
@@ -267,9 +293,10 @@ export default function Result() {
               />
             </div>
           </div>
+          )}
 
           {/* 稀有度 */}
-          {stats && stats.percentage && (
+          {!isPreview && stats && stats.percentage && (
             <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 mb-6">
               <span className="text-sm">{isEggResult ? '🏆' : '🌿'}</span>
               <span className="text-xs text-white/80">
@@ -317,7 +344,7 @@ export default function Result() {
             {/* 左栏 */}
             <div className="space-y-5">
               {/* 数据对比卡 */}
-              {stats && (
+              {!isPreview && stats && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -461,10 +488,12 @@ export default function Result() {
               className="mt-6 bg-white rounded-[20px] border border-border p-6"
             >
               <h3 className="text-lg font-black text-text-heading mb-1">7维度画像</h3>
-              <p className="text-[11px] text-text-muted font-mono tracking-wide mb-5">DIMENSION PROFILE · 基于你的作答向量生成</p>
+              <p className="text-[11px] text-text-muted font-mono tracking-wide mb-5">
+                {isPreview ? 'DIMENSION PROFILE · 该动物的标准维度画像' : 'DIMENSION PROFILE · 基于你的作答向量生成'}
+              </p>
 
               {(() => {
-                const displayVec = userVec || animal.vector;
+                const displayVec = isPreview ? animal.vector : (userVec || animal.vector);
                 const labels = vecToLabel(displayVec);
                 const categories = [...new Set(DIMENSIONS.map(d => d.category))];
                 return categories.map(cat => (
@@ -494,6 +523,7 @@ export default function Result() {
                                 {level}
                               </span>
                             </div>
+                            {!isPreview && (
                             <div className="h-1.5 rounded-full overflow-hidden mb-2" style={{ background: `rgba(${badgeRgb},0.08)` }}>
                               <motion.div
                                 className="h-full rounded-full"
@@ -504,6 +534,7 @@ export default function Result() {
                                 transition={{ duration: 0.6, delay: dim.id * 0.05 }}
                               />
                             </div>
+                            )}
                             <p className="text-[12.5px] text-text-muted leading-relaxed pl-0.5">{desc}</p>
                           </div>
                         );
@@ -558,28 +589,41 @@ export default function Result() {
 
           {/* 操作按钮 */}
           <div className="mt-8 max-w-md mx-auto space-y-3">
-            <button
-              onClick={handleShare}
-              className="w-full py-4 rounded-[18px] text-white font-bold text-base cursor-pointer transition-opacity hover:opacity-90"
-              style={{ background: theme.posterBg }}
-            >
-              🎴 {theme.posterText}
-            </button>
-
-            <div className="flex gap-3">
+            {isPreview ? (
               <button
                 onClick={() => { sessionStorage.removeItem('hdti_answers'); navigate('/quiz'); }}
-                className="flex-1 bg-white border border-border text-text-secondary py-3.5 rounded-[18px] text-sm font-medium hover:border-primary-light transition-colors cursor-pointer"
+                className="w-full py-4 rounded-[18px] text-white font-bold text-base cursor-pointer transition-opacity hover:opacity-90"
+                style={{ background: theme.posterBg }}
               >
-                ↻ 再测一次
+                去测测你是哪种横断山兽 →
               </button>
-              <button
-                onClick={() => navigate('/animals')}
-                className="flex-1 bg-white border border-border text-text-secondary py-3.5 rounded-[18px] text-sm font-medium hover:border-primary-light transition-colors cursor-pointer"
-              >
-                探索其他动物 →
-              </button>
-            </div>
+            ) : (
+              <>
+                <button
+                  onClick={handleShare}
+                  disabled={posterLoading}
+                  className="w-full py-4 rounded-[18px] text-white font-bold text-base cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-60 disabled:cursor-wait"
+                  style={{ background: theme.posterBg }}
+                >
+                  {posterLoading ? '⏳ 海报生成中...' : `🎴 ${theme.posterText}`}
+                </button>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => { sessionStorage.removeItem('hdti_answers'); navigate('/quiz'); }}
+                    className="flex-1 bg-white border border-border text-text-secondary py-3.5 rounded-[18px] text-sm font-medium hover:border-primary-light transition-colors cursor-pointer"
+                  >
+                    ↻ 再测一次
+                  </button>
+                  <button
+                    onClick={() => navigate('/animals')}
+                    className="flex-1 bg-white border border-border text-text-secondary py-3.5 rounded-[18px] text-sm font-medium hover:border-primary-light transition-colors cursor-pointer"
+                  >
+                    探索其他动物 →
+                  </button>
+                </div>
+              </>
+            )}
           </div>
 
           {/* 页脚 */}
@@ -589,6 +633,44 @@ export default function Result() {
           </div>
         </div>
       </div>
+
+      {/* 海报预览弹窗 */}
+      <AnimatePresence>
+        {posterUrl && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+            onClick={() => setPosterUrl(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-[320px] w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img src={posterUrl} alt="分享海报" className="w-full rounded-[16px] shadow-2xl" />
+              <div className="flex gap-3 mt-4">
+                <button
+                  onClick={handleDownloadPoster}
+                  className="flex-1 bg-white text-text-heading py-3 rounded-[14px] text-sm font-bold cursor-pointer hover:bg-gray-50 transition-colors"
+                >
+                  保存图片
+                </button>
+                <button
+                  onClick={() => setPosterUrl(null)}
+                  className="flex-1 bg-white/20 text-white py-3 rounded-[14px] text-sm font-medium cursor-pointer hover:bg-white/30 transition-colors"
+                >
+                  关闭
+                </button>
+              </div>
+              <p className="text-center text-white/60 text-xs mt-3">长按图片也可保存到相册</p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Toast */}
       <AnimatePresence>

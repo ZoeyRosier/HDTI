@@ -10,8 +10,9 @@ export function readResultFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const r = params.get('r');
   const m = params.get('m');
+  const preview = params.get('preview');
   if (r) {
-    return { animalId: r, matchRate: parseInt(m) || 0, isSharedView: true };
+    return { animalId: r, matchRate: parseInt(m) || 0, isSharedView: true, isPreview: preview === '1' };
   }
   return null;
 }
