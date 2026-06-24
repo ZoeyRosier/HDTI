@@ -10,19 +10,18 @@ export function readResultFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const r = params.get('r');
   const m = params.get('m');
-  const preview = params.get('preview');
   if (r) {
-    return { animalId: r, matchRate: parseInt(m) || 0, isSharedView: true, isPreview: preview === '1' };
+    return { animalId: r, matchRate: parseInt(m) || 0, isSharedView: true };
   }
   return null;
 }
 
-export async function shareResult(animalName, animalCode, matchRate, animalId) {
+export async function shareResult({ animalName, animalCode, matchRate, animalId, t }) {
   const shareUrl = generateShareUrl(animalId, matchRate);
   const shareData = {
-    title: 'HDTI 横断山脉动物人格测试',
-    text: `我是${animalCode}型人格（${animalName}），匹配度${matchRate}%，你是哪种横断山脉动物？`,
-    url: shareUrl
+    title: t('share.title'),
+    text: t('share.text', { code: animalCode, name: animalName, rate: matchRate }),
+    url: shareUrl,
   };
 
   if (navigator.share) {
