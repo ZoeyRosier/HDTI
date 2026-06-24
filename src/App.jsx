@@ -6,6 +6,8 @@ import Result from './pages/Result';
 import Match from './pages/Match';
 import MatchLoading from './pages/MatchLoading';
 import MatchResult from './pages/MatchResult';
+import Animals from './pages/Animals';
+import AnimalDetail from './pages/AnimalDetail';
 import { useI18n, LangToggle } from './i18n';
 
 export default function App() {
@@ -16,8 +18,8 @@ export default function App() {
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/loading" element={<Loading />} />
         <Route path="/result" element={<Result />} />
-        <Route path="/animals" element={<PlaceholderPage pageKey="gallery" />} />
-        <Route path="/animals/:id" element={<PlaceholderPage pageKey="detail" />} />
+        <Route path="/animals" element={<Animals />} />
+        <Route path="/animals/:id" element={<AnimalDetail />} />
         <Route path="/about" element={<PlaceholderPage pageKey="about" />} />
         <Route path="/match" element={<Match />} />
         <Route path="/match/loading" element={<MatchLoading />} />

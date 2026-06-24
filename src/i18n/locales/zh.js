@@ -41,7 +41,7 @@ export default {
     rarity: '🏅 仅 {percent}% 的人测出了{name}',
     scrollHint: '↓ 向下了解这只动物',
     statsCount: '已有 {count} 人测出了{name}',
-    statsWild: '而野外，只剩约 {population}',
+    statsWild: '而野外，只剩 {population}',
     statsRank: '你是第 {count} 个{name}',
     archetype: '你的横断山原型',
     speciesProfile: '物种档案',
@@ -66,6 +66,24 @@ export default {
     detail: '动物档案',
     about: '算法解析',
     match: '好友匹配',
+  },
+
+  gallery: {
+    title: '横断山兽图鉴',
+    baseTitle: '8 种基础动物',
+    baseSubtitle: 'BASE · 测一次即可遇见',
+    eggTitle: '还有 5 种隐藏彩蛋动物',
+    eggDesc: '完成测试才能解锁 · 极低概率触发，遇到算你命中注定',
+    cta: '✦ 去测我是哪种横断山兽 →',
+    backHome: '🐾 首页',
+    footer1: 'HDTI · 横断山脉动物人格测试',
+    footer2: '点击动物卡片 · 查看完整科普档案',
+  },
+
+  detail: {
+    archetype: '横断山兽人格解读',
+    backGallery: '← 返回图鉴',
+    match: '✦ 好友匹配',
   },
 
   match: {

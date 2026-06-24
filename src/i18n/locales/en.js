@@ -68,6 +68,24 @@ export default {
     match: 'Friend Match',
   },
 
+  gallery: {
+    title: 'Hengduan Animal Archive',
+    baseTitle: '8 Base Animals',
+    baseSubtitle: 'BASE · One test to meet them',
+    eggTitle: '5 Hidden Easter Egg Animals',
+    eggDesc: 'Complete the test to unlock · Extremely rare — if you meet one, it was meant to be',
+    cta: '✦ Find My Hengduan Animal →',
+    backHome: '🐾 Home',
+    footer1: 'HDTI · Hengduan Mountain Animal Personality Test',
+    footer2: 'Tap a card · View full species profile',
+  },
+
+  detail: {
+    archetype: 'Personality Reading',
+    backGallery: '← Back to Gallery',
+    match: '✦ Friend Match',
+  },
+
   match: {
     labBadge: 'HENGDUAN ECO LAB',
     labTitle: 'Hengduan Eco Match Lab',
