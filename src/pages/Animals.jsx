@@ -9,7 +9,8 @@ const eggAnimals = animals.filter((a) => a.isEgg);
 
 export default function Animals() {
   const navigate = useNavigate();
-  const { t, pickAnimal } = useI18n();
+  const { t, pickAnimal, language } = useI18n();
+  const isEnCard = language === 'en';
 
   return (
     <div
@@ -96,8 +97,18 @@ export default function Animals() {
                   </span>
                 </div>
                 <div className="px-3 pt-2.5 pb-3">
-                  <div className="font-extrabold text-base text-text-heading">{animal.name}</div>
-                  <div className="text-xs text-text-muted mt-1 truncate">
+                  <div
+                    className={`font-extrabold text-text-heading leading-snug ${
+                      isEnCard ? 'text-[13px] tracking-tight' : 'text-base'
+                    }`}
+                  >
+                    {animal.name}
+                  </div>
+                  <div
+                    className={`text-text-muted mt-1 truncate ${
+                      isEnCard ? 'text-[10px] leading-tight' : 'text-xs'
+                    }`}
+                  >
                     {animal.tags.join(' · ')}
                   </div>
                 </div>
@@ -124,7 +135,7 @@ export default function Animals() {
                   <span className="text-[15px]">✦</span>
                   <span className="font-mono text-[9px] text-[#e0bd86]">{egg.code}</span>
                 </div>
-                <div className="text-[10px] text-[#b08a52] mt-1.5">？？？</div>
+                <div className="text-[10px] text-[#b08a52] mt-1.5">{t('home.animalEggCode')}</div>
               </div>
             ))}
           </div>

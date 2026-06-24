@@ -37,6 +37,10 @@ export const IUCN_STYLES = {
   NT: { bg: 'bg-iucn-nt-bg', text: 'text-iucn-nt-text' },
 };
 
+export function getGalleryHeroBg(animalId) {
+  return animalGradients[animalId] ?? animalGradients.snow_leopard;
+}
+
 export function getIucnStyle(status) {
   return IUCN_STYLES[status] ?? IUCN_STYLES.VU;
 }
