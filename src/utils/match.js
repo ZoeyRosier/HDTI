@@ -1,12 +1,16 @@
 import { animals, animalsMap, animalVectors } from '../data/animals';
-import { calculateResult, calcMatchRate } from './scoring';
-import {
-  matchPairs,
-  fallbackCopy,
-  pairKey,
-  HIGH_COMPAT_THRESHOLD,
-} from '../data/matchData';
-import { pickLocaleCopy } from '../i18n/resolve';
+import { calculateResult, calcMatchRate, vecToLabel } from './scoring';
+import { generatePairCopy, getPairEcologySummary } from '../data/matchData';
+
+const PAIR_DIMENSIONS = [
+  { id: 0, code: 'D1', nameZh: '探索倾向', nameEn: 'Exploration' },
+  { id: 1, code: 'D2', nameZh: '应激反应', nameEn: 'Stress Response' },
+  { id: 2, code: 'D3', nameZh: '群体依赖', nameEn: 'Group Bond' },
+  { id: 3, code: 'D4', nameZh: '社交主动', nameEn: 'Social Drive' },
+  { id: 4, code: 'D5', nameZh: '行动频率', nameEn: 'Activity' },
+  { id: 5, code: 'D6', nameZh: '领地意识', nameEn: 'Territorial' },
+  { id: 6, code: 'D7', nameZh: '适应灵活', nameEn: 'Adaptability' },
+];
 
 const RESULT_TTL = 30 * 24 * 60 * 60 * 1000;
 
@@ -14,6 +18,27 @@ function getAnimalVector(animalId) {
   const animal = animalsMap[animalId];
   if (!animal) return null;
   return animalVectors[animalId] ?? animal.vector ?? null;
+}
+
+/** @param {string} animalAId @param {string} animalBId @param {'zh'|'en'} lang */
+export function getPairDimensions(animalAId, animalBId, lang) {
+  const vecA = getAnimalVector(animalAId);
+  const vecB = getAnimalVector(animalBId);
+  if (!vecA || !vecB) return [];
+
+  const labelsA = vecToLabel(vecA);
+  const labelsB = vecToLabel(vecB);
+
+  return PAIR_DIMENSIONS.map((dim) => ({
+    id: dim.id,
+    code: dim.code,
+    name: lang === 'en' ? dim.nameEn : dim.nameZh,
+    valueA: vecA[dim.id],
+    valueB: vecB[dim.id],
+    levelA: labelsA[dim.id],
+    levelB: labelsB[dim.id],
+    gap: Math.abs(vecA[dim.id] - vecB[dim.id]),
+  }));
 }
 
 /** 两动物原型向量契合度（0–100） */
@@ -116,22 +141,21 @@ export function getSelfResult() {
  */
 export function getMatchResult(animalAId, animalBId, lang) {
   const compatRate = calcPairCompatibility(animalAId, animalBId);
-  const key = pairKey(animalAId, animalBId);
-
-  const preset = matchPairs.find((p) => pairKey(p.ids[0], p.ids[1]) === key);
-  const copy = preset
-    ? pickLocaleCopy(preset.locale, lang)
-    : pickLocaleCopy(
-        compatRate >= HIGH_COMPAT_THRESHOLD ? fallbackCopy.high.locale : fallbackCopy.low.locale,
-        lang,
-      );
+  const copy = generatePairCopy(animalAId, animalBId, lang, compatRate);
+  const ecology = getPairEcologySummary(animalAId, animalBId, lang);
+  const dimensions = getPairDimensions(animalAId, animalBId, lang);
+  const alignedDims = dimensions.filter((d) => d.gap < 0.35).length;
+  const divergentDims = dimensions.filter((d) => d.gap >= 0.7).length;
 
   return {
     compatRate,
-    isPreset: Boolean(preset),
+    relationPath: copy.path,
     relationName: copy.relationName,
     tags: copy.tags,
     desc: copy.desc,
+    ecology,
+    dimensions,
+    dimensionSummary: { aligned: alignedDims, divergent: divergentDims, total: dimensions.length },
   };
 }
 
