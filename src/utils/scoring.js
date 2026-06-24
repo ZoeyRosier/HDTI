@@ -55,7 +55,7 @@ export function calculateResult(answers) {
       result: "giant_panda",
       isEgg: true,
       eggType: "hidden",
-      userVec: userAvgVec.map(v => Math.round(v)),
+      userVec: userAvgVec,
       matchRate: 88,
     };
   }
@@ -68,13 +68,13 @@ export function calculateResult(answers) {
   // 优先级2：极致形态（≥9分）
   if (snowScore >= 9 && monkeyScore >= 9) {
     const result = snowScore >= monkeyScore ? "snow_leopard_extreme" : "monkey_extreme";
-    return { result, isEgg: true, eggType: "extreme", userVec: userAvgVec.map(v => Math.round(v)), matchRate: 95 };
+    return { result, isEgg: true, eggType: "extreme", userVec: userAvgVec, matchRate: 95 };
   }
   if (snowScore >= 9) {
-    return { result: "snow_leopard_extreme", isEgg: true, eggType: "extreme", userVec: userAvgVec.map(v => Math.round(v)), matchRate: 95 };
+    return { result: "snow_leopard_extreme", isEgg: true, eggType: "extreme", userVec: userAvgVec, matchRate: 95 };
   }
   if (monkeyScore >= 9) {
-    return { result: "monkey_extreme", isEgg: true, eggType: "extreme", userVec: userAvgVec.map(v => Math.round(v)), matchRate: 95 };
+    return { result: "monkey_extreme", isEgg: true, eggType: "extreme", userVec: userAvgVec, matchRate: 95 };
   }
 
   // 优先级3：双高组合（≥7分）
@@ -85,13 +85,13 @@ export function calculateResult(answers) {
     const cloudSum    = legacyScores["雪豹"] + legacyScores["林麝"];
     const pheasantSum = legacyScores["黑颈鹤"] + legacyScores["羚牛"];
     const result = cloudSum >= pheasantSum ? "clouded_leopard" : "chinese_monal";
-    return { result, isEgg: true, eggType: "combo", userVec: userAvgVec.map(v => Math.round(v)), matchRate: 90 };
+    return { result, isEgg: true, eggType: "combo", userVec: userAvgVec, matchRate: 90 };
   }
   if (cloudTrigger) {
-    return { result: "clouded_leopard", isEgg: true, eggType: "combo", userVec: userAvgVec.map(v => Math.round(v)), matchRate: 90 };
+    return { result: "clouded_leopard", isEgg: true, eggType: "combo", userVec: userAvgVec, matchRate: 90 };
   }
   if (pheasantTrigger) {
-    return { result: "chinese_monal", isEgg: true, eggType: "combo", userVec: userAvgVec.map(v => Math.round(v)), matchRate: 90 };
+    return { result: "chinese_monal", isEgg: true, eggType: "combo", userVec: userAvgVec, matchRate: 90 };
   }
 
   // ── 主算法：曼哈顿距离 ──
@@ -124,22 +124,21 @@ export function calculateResult(answers) {
     }
   }
 
-  // 匹配度：用户取整向量 vs 动物标准向量
-  const intUserVec = userAvgVec.map(v => Math.round(v));
-  const matchRate = calcMatchRate(intUserVec, animalVectors[finalAnimalId]);
+  // 匹配度：用户归一化向量 vs 动物标准向量
+  const matchRate = calcMatchRate(userAvgVec, animalVectors[finalAnimalId]);
 
   return {
     result: finalAnimalId,
     isEgg: false,
     eggType: null,
-    userVec: intUserVec,
+    userVec: userAvgVec,
     matchRate,
     distances,
   };
 }
 
 export function vecToLabel(vec) {
-  return vec.map(v => v <= 1.5 ? 'L' : v <= 2.5 ? 'M' : 'H');
+  return vec.map(v => v <= 1.57 ? 'L' : v >= 2.13 ? 'H' : 'M');
 }
 
 export function getDimensionDesc(dimIndex, value) {
@@ -152,6 +151,6 @@ export function getDimensionDesc(dimIndex, value) {
     { L: "退一步海阔天空，没什么值得正面硬刚。", M: "多数时候和气生财，但碰到底线会突然变脸。", H: "我的东西就是我的，碰一下试试？后果自负。" },
     { L: "老办法用得好好的，为什么要换？换了万一翻车。", M: "该守规矩的时候守，该变通的时候也不死磕。", H: "此路不通？没关系，地图上还有七条备选路线。" },
   ];
-  const level = value <= 1.5 ? 'L' : value <= 2.5 ? 'M' : 'H';
+  const level = value <= 1.57 ? 'L' : value >= 2.13 ? 'H' : 'M';
   return descs[dimIndex][level];
 }

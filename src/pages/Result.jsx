@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { animalsMap, animals } from '../data/animals';
@@ -44,7 +44,7 @@ export default function Result() {
   const [posterUrl, setPosterUrl] = useState(null);
   const [posterLoading, setPosterLoading] = useState(false);
 
-  const resultData = useMemo(() => {
+  const [resultData] = useState(() => {
     const urlResult = readResultFromUrl();
     if (urlResult) {
       const animal = animalsMap[urlResult.animalId];
@@ -55,16 +55,21 @@ export default function Result() {
 
     const answersStr = sessionStorage.getItem('hdti_answers');
     if (answersStr) {
-      const answers = JSON.parse(answersStr);
-      if (Object.keys(answers).length === 16) {
-        const { result, isEgg, eggType, matchRate, userVec } = calculateResult(answers);
-        const animal = animalsMap[result];
-        return { animal, matchRate, isSharedView: false, isEgg, eggType, userVec };
+      try {
+        const answers = JSON.parse(answersStr);
+        if (Object.keys(answers).length === 16) {
+          const { result, isEgg, eggType, matchRate, userVec } = calculateResult(answers);
+          const animal = animalsMap[result];
+          if (!animal) return null;
+          return { animal, matchRate, isSharedView: false, isEgg, eggType, userVec };
+        }
+      } catch (e) {
+        return null;
       }
     }
 
     return null;
-  }, []);
+  });
 
   useEffect(() => {
     if (!resultData) {
@@ -570,7 +575,7 @@ export default function Result() {
                       key={a.id}
                       className="flex flex-col items-center text-center p-3 rounded-[14px] border transition-colors cursor-pointer"
                       style={{ borderColor: isEggResult ? theme.dividerColor : undefined, background: isEggResult ? '#ffffff' : undefined }}
-                      onClick={() => navigate(`/result?r=${a.id}&m=${a.match}`)}
+                      onClick={() => navigate(`/animals/${a.id}`)}
                     >
                       <div className="text-[11px] mb-1" style={{ color: isEggResult ? theme.headingColor : '#8a9379' }}>{a.name}</div>
                       <img

@@ -24,7 +24,8 @@ export default function Quiz() {
   const [answers, setAnswers] = useState(loadAnswers);
   const advanceTimerRef = useRef(null);
 
-  const question = questions[currentIndex];
+  const safeIndex = Math.min(currentIndex, questions.length - 1);
+  const question = questions[safeIndex];
   const localized = useMemo(
     () => pickQuestion(question),
     [question, language, pickQuestion],
@@ -50,11 +51,12 @@ export default function Quiz() {
       });
 
       if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
+      const isLastQuestion = currentIndex >= totalQuestions - 1;
       advanceTimerRef.current = setTimeout(() => {
-        if (currentIndex < totalQuestions - 1) {
-          setCurrentIndex((prev) => prev + 1);
-        } else {
+        if (isLastQuestion) {
           navigate('/loading');
+        } else {
+          setCurrentIndex((prev) => prev + 1);
         }
       }, 300);
     },

@@ -15,7 +15,9 @@ export const animals = [
     iucnUrl: "https://www.iucnredlist.org/species/22732/50664030",
     tags: ["独行高手", "高山潜伏者", "精准出手"],
     quote: "没人看清我，但结果已经决定了。",
+    quoteEn: "No one sees me clearly, but the outcome is already decided.",
     personalityName: "独行客",
+    personalityNameEn: "The Lone Walker",
     personalityDesc: `你在场，但很多时候别人不确定你在不在场——这不是你的失误，这是你的战术。
 
 你不是内向，你只是对"值不值得开口"这件事标准极高。跟你相处久了的人会发现，你沉默的时候不是没想法，而是已经把局势审完了，只是懒得同步给别人。你从不急着证明自己，因为你深知：真正有分量的事，等着就行，时机到了自然看见。
@@ -30,7 +32,7 @@ export const animals = [
       statusDesc: `"雪山之王"正面临气候变暖的逼迫。雪线上升导致它们的领地正在缩小，同时还要面对偷猎和人兽冲突的威胁。它们需要一片不被打扰的广阔群山。`,
       iucnHook: `想知道雪豹为什么"看着最冷、其实最稳"？查看官方资料 →`
     },
-    vector: [2, 3, 1, 1, 2, 3, 3]
+    vector: [1.74, 1.95, 1.50, 1.42, 1.83, 2.00, 2.23]
   },
 
   {
@@ -46,7 +48,9 @@ export const animals = [
     iucnUrl: "https://www.iucnredlist.org/species/39866/10278553",
     tags: ["社交发动机", "高山树冠居民", "气氛担当"],
     quote: "我不制造气氛，我就是气氛。",
+    quoteEn: "I don't create the vibe — I AM the vibe.",
     personalityName: "气氛组",
+    personalityNameEn: "The Vibe Maker",
     personalityDesc: `你离开之后，那个聚会的空气质量会肉眼可见地下降。这不是夸张，这是事实。
 
 你不一定是全场嗓门最大的那个，但你大概率是让场子"不至于死"的那个。话题快断了你会顺手接，有人快被晾在角落里你会第一个注意到，气氛要崩的时候你像个弹簧——你甚至不需要刻意，就这么把所有人连在一起了。
@@ -61,7 +65,7 @@ export const animals = [
       statusDesc: `濒危（EN）。目前野生种群数量仅3000只左右。原始森林的砍伐导致它们栖息地破碎化，猴群之间无法交流基因。保护它们，就是保护横断山脉的原始高山森林生态。`,
       iucnHook: `想知道这群"红唇猴"如何在雪山之巅抱团生存？查看官方资料 →`
     },
-    vector: [2, 2, 3, 3, 2, 1, 2]
+    vector: [1.91, 1.85, 2.01, 1.90, 1.89, 1.65, 1.90]
   },
 
   {
@@ -77,7 +81,9 @@ export const animals = [
     iucnUrl: "https://www.iucnredlist.org/species/5953/9190449",
     tags: ["团队执行者", "配合型高手", "行动比口号重要"],
     quote: "单打独斗是浪费，我们一起上。",
+    quoteEn: "Going solo is a waste — let's do this together.",
     personalityName: "协作者",
+    personalityNameEn: "The Collaborator",
     personalityDesc: `你是那种一听到"大家各做各的吧"就会在心里轻轻皱眉的人，因为你太知道了：真正能把事做成的，从来不是各自燃烧，而是彼此咬合。
 
 你不迷恋一个人扛全场的英雄主义，甚至会觉得那种明明能一起推进、却非要单独表演的场面，多少有点浪费集体效率。你天生很会看位置、看节奏、看分工，也知道什么时候该顶上去，什么时候该接力，什么时候该把锋芒让给更适合的人。
@@ -92,7 +98,7 @@ export const animals = [
       statusDesc: `濒危（EN）。全球成年个体可能已不足3000只。由于栖息地破坏、猎物密度下降以及犬类传染病（如犬瘟热），豺的种群正面临静悄悄的消亡。`,
       iucnHook: `想知道这支"森林特种部队"为何比大熊猫还稀有？查看官方资料 →`
     },
-    vector: [3, 3, 3, 3, 3, 3, 1]
+    vector: [2.07, 2.08, 1.92, 1.84, 2.26, 2.07, 1.84]
   },
 
   {
@@ -108,7 +114,9 @@ export const animals = [
     iucnUrl: "https://www.iucnredlist.org/species/22692162/93341759",
     tags: ["优雅警戒者", "距离感美人", "开阔地观察家"],
     quote: "我不是高冷，我只是在观察你。",
+    quoteEn: "I'm not cold — I'm just observing you.",
     personalityName: "观察家",
+    personalityNameEn: "The Observer",
     personalityDesc: `你已经在心里把这个人分析完了。他们还以为你在发呆。
 
 你对"场"有极强的感知力，进到一个新环境，你的第一反应不是融入，而是扫描：谁在主导、谁在陪衬、哪里有暗流、哪个方向随时可能出现变量。你不是不想靠近，你只是习惯先把地形摸清楚，再决定要不要进去。
@@ -123,7 +131,7 @@ export const animals = [
       statusDesc: `近危（NT）。虽然在国家的大力保护下种群数量有所回升，但高寒湿地的退化、气候变化带来的干旱，以及人类放牧对水源的挤占，依然是它们生存的严峻挑战。`,
       iucnHook: `想知道这位"高原探戈大师"的优雅背后藏着什么？查看官方资料 →`
     },
-    vector: [3, 2, 2, 2, 2, 2, 3]
+    vector: [2.04, 1.80, 1.61, 1.60, 1.90, 1.88, 2.30]
   },
 
   {
@@ -139,7 +147,9 @@ export const animals = [
     iucnUrl: "https://www.iucnredlist.org/species/714/110023718",
     tags: ["慢热选手", "节能大师", "可爱但有边界感"],
     quote: "不是懒，是把能量留给值得的事。",
+    quoteEn: "Not lazy — just saving energy for what matters.",
     personalityName: "节能派",
+    personalityNameEn: "The Energy Saver",
     personalityDesc: `你有一套非常精密的内部能耗管理系统，只是外人看起来像"又在摸鱼"。
 
 你不是没热情，你只是对"值不值得燃"这件事非常挑剔。无意义的社交、为了合群的表演、明显要拖很久才能看到结果的项目——这些东西在你的系统里会被自动归类为"高耗低效"，然后你就会开始犯困。这不是懒，这是你进化出来的自我保护。
@@ -154,7 +164,7 @@ export const animals = [
       statusDesc: `濒危（EN）。全球野生种群数量急剧下降。随着人类工程和农林的扩张，小熊猫的家园正在消失，"可爱"并不能成为抵御栖息地丧失的武器。`,
       iucnHook: `想知道"可爱"为什么救不了小熊猫？查看官方资料 →`
     },
-    vector: [2, 2, 1, 1, 1, 1, 2]
+    vector: [1.72, 1.71, 1.56, 1.54, 1.80, 1.69, 2.08]
   },
 
   {
@@ -170,7 +180,9 @@ export const animals = [
     iucnUrl: "https://www.iucnredlist.org/species/22824/9391240",
     tags: ["资源守护者", "直接派", "吃饱了才有安全感"],
     quote: "碰我底线之前，先想清楚后果。",
+    quoteEn: "Think twice before crossing my line.",
     personalityName: "守护者",
+    personalityNameEn: "The Guardian",
     personalityDesc: `你有温和区，也有雷区。很多人在进入雷区之前，还以为自己在温和区。
 
 你不是那种喜欢天天划线、处处设防的人。日子过得去，大家都好说；可一旦有人真的把手伸向你守的东西——无论是你的时间、你的资源，还是某条你从没明说但清晰存在的边界——你会切换得非常干脆，干脆到让对方一瞬间不确定刚才那个好说话的你是不是幻觉。
@@ -185,7 +197,7 @@ export const animals = [
       statusDesc: `易危（VU）。尽管适应力极强，但人类对森林的开发切断了它们的觅食路线。更残忍的是，非法的"活熊取胆"和野生熊掌贸易，至今仍是悬在它们头顶的利刃。`,
       iucnHook: `想知道"月熊"胸前那轮月亮背后的残酷真相？查看官方资料 →`
     },
-    vector: [2, 1, 1, 1, 3, 3, 3]
+    vector: [1.73, 1.80, 1.79, 1.71, 2.14, 2.09, 1.88]
   },
 
   {
@@ -201,7 +213,9 @@ export const animals = [
     iucnUrl: "https://www.iucnredlist.org/species/42391/61978544",
     tags: ["安静观察者", "高敏感型", "撤退速度很快"],
     quote: "你找不到我，但我一直在。",
+    quoteEn: "You can't find me, but I've always been here.",
     personalityName: "隐者",
+    personalityNameEn: "The Ghost",
     personalityDesc: `别人还在判断"这个局安不安全"，你已经规划好三条退路了。
 
 你不是多疑，你只是信息处理速度比大多数人快——说话方式有点奇怪？收到了。眼神往左偏了一下？收到了。这个地方的空气质量突然变了？也收到了。你的系统永远在跑后台，这让你比任何人都更早察觉到"有点不对"，也比任何人都更快做出反应。
@@ -218,7 +232,7 @@ export const animals = [
       statusDesc: `濒危（EN）。成年雄性林麝腹部有一个香腺，能分泌极其名贵的"麝香"。正因为这价比黄金的香料，林麝遭受了极其惨烈的疯狂盗猎。你以为的岁月静好，其实是它们躲避猎枪的胆战心惊。`,
       iucnHook: `想知道"价比黄金"的麝香让林麝付出了什么代价？查看官方资料 →`
     },
-    vector: [1, 1, 1, 1, 1, 2, 2]
+    vector: [1.67, 1.65, 1.58, 1.52, 1.75, 1.70, 1.95]
   },
 
   {
@@ -234,7 +248,9 @@ export const animals = [
     iucnUrl: "https://www.iucnredlist.org/species/22137/9360918",
     tags: ["稳住型选手", "抗压高手", "山地重装坦克"],
     quote: "推不动我的事，最后都被我推走了。",
+    quoteEn: "What couldn't be moved — I moved it anyway.",
     personalityName: "坦克",
+    personalityNameEn: "The Tank",
     personalityDesc: `你不是反应慢，你只是在别人还没开始慌的时候，就已经把重心放下去了。
 
 你不属于那种靠速度和灵巧赢的类型。你赢的方式更古老：扛着走，推着过，谁都知道你会到，你也知道，所以不急。别人在你前面蹦跳，你慢吞吞往前推，然后你发现他们已经在喘了，你还没用到五成力。
@@ -249,7 +265,7 @@ export const animals = [
       statusDesc: `易危（VU）。作为国家一级保护动物，它们体型虽大，但在面对栖息地被公路、水电站割裂时，依然显得无比脆弱。种群隔离是它们目前最大的困境。`,
       iucnHook: `想知道这头"六不像"为什么推不动一条公路？查看官方资料 →`
     },
-    vector: [2, 3, 3, 1, 2, 3, 1]
+    vector: [1.80, 1.95, 1.95, 1.86, 1.97, 2.05, 1.92]
   },
 
   // ============ 彩蛋5只动物 ============
@@ -267,7 +283,9 @@ export const animals = [
     iucnUrl: "https://www.iucnredlist.org/species/712/121745669",
     tags: ["柔软稳定核", "节奏掌控者", "看似松弛实则很有主见"],
     quote: "真正稳得住的⼈，连柔软都会⻓出⼒量。",
+    quoteEn: "The truly grounded grow strength even from softness.",
     personalityName: "定心者",
+    personalityNameEn: "The Anchor",
     personalityDesc: `先说清楚：SOFT不是"好捏"，不是"没脾气"，更不是"随便"。
 
 你身上那种让人放松的气质，不是因为你没有想法，而是因为你的想法从不需要靠外放来证明。你不急着争、不急着抢、不急着让所有人知道你在。你有自己的节奏，而且你对这个节奏的掌控，比大多数人意识到的要强得多。
@@ -282,7 +300,7 @@ export const animals = [
       statusDesc: `易危（VU）。虽然保护成效显著，但栖息地碎片化和气候变化对竹林的影响仍是长期威胁。大熊猫的"国宝"光环背后，是几十年持续投入的保护体系在支撑。`,
       iucnHook: `想知道"食肉身体、食草人生"是怎么被演化保留下来的？查看官方资料 →`
     },
-    vector: [2, 1, 2, 2, 1, 1, 2]
+    vector: [1.82, 1.72, 1.82, 1.78, 1.76, 1.65, 1.90]
   },
 
   {
@@ -298,7 +316,9 @@ export const animals = [
     iucnUrl: "https://www.iucnredlist.org/species/23049/50049167",
     tags: ["神秘到不存在", "你永远找不到我", "倒反天罡"],
     quote: "你可能永远找不到我。",
+    quoteEn: "You may never find me.",
     personalityName: "迷踪客",
+    personalityNameEn: "The Phantom",
     personalityDesc: `科学家带着设备进山找你的同类，最后只拍到风。这是赞美。
 
 你不是刻意神秘，你只是自然而然地存在于大多数人的感知边缘——你来过，但没人能说清你什么时候来的；你在，但很多时候大家只是"感觉"你在，并不能真正确定。这不是你故意制造的效果，这是你存在的方式。
@@ -313,7 +333,7 @@ export const animals = [
       statusDesc: `易危（VU）。中国大陆野外云豹已极为罕见，最后一只圈养大陆云豹已于2025年1月离世。它们的消失几乎是无声的——就像它们活着时一样。`,
       iucnHook: `想知道云豹为什么总给人"见过好像又没见过"的感觉？查看官方资料 →`
     },
-    vector: [2, 1, 1, 1, 2, 2, 3]
+    vector: [1.70, 1.68, 1.52, 1.45, 1.82, 1.85, 2.20]
   },
 
   {
@@ -329,7 +349,9 @@ export const animals = [
     iucnUrl: "https://www.iucnredlist.org/species/22679187/92806486",
     tags: ["高山发光体", "惊艳型存在", "安静但自带镜头感"],
     quote: "你见过我，算你运气好。",
+    quoteEn: "If you've seen me, count yourself lucky.",
     personalityName: "惊鸿客",
+    personalityNameEn: "The Flash",
     personalityDesc: `你出现在一个地方，那个地方的平均审美会被临时拉高，这不是你的问题，这是你的体质。
 
 你不是在刻意发光，你只是天生的颜色就比周围亮一点、质感就比周围高一档、存在感就比周围稠一点。你不需要开口，不需要表演，不需要做任何特别的事——你只需要出现。然后有人会在心里想：哦，今天来了。
@@ -344,7 +366,7 @@ export const animals = [
       statusDesc: `易危（VU）。高山草甸退化和人类活动干扰是主要威胁。作为中国特有种，它的每一次出现都弥足珍贵。`,
       iucnHook: `想知道这道"高山彩虹"为什么如此华丽却如此稀有？查看官方资料 →`
     },
-    vector: [2, 1, 2, 2, 2, 2, 2]
+    vector: [1.88, 1.72, 1.75, 1.72, 1.85, 1.82, 1.95]
   },
 
   {
@@ -360,7 +382,9 @@ export const animals = [
     iucnUrl: "https://www.iucnredlist.org/species/22732/50664030",
     tags: ["高冷外壳", "沙雕内核", "咬尾巴的那只"],
     quote: "外人看我：雪山之王。我自己：[被风吓到原地起跳]。",
+    quoteEn: "Others see: king of the mountains. Me: [jumps at a gust of wind].",
     personalityName: "反差王",
+    personalityNameEn: "The Plot Twist",
     personalityDesc: `你给外人的印象和你给自己的印象，是两套完全不同的叙事。
 
 外人版本：沉稳、神秘、有点难接近、说话不多但每次说都说到点上，总之整体气质是"这个人很厉害"。你自己的版本：刚才那个动静是什么、我要不要在意、算了先不在意、不对感觉有点不对、哎怎么回事、等等——然后你就把自己的尾巴叼住了。
@@ -376,7 +400,7 @@ export const animals = [
       iucnHook: `想知道人类今天究竟是怎么在高原上"数雪豹"的？查看官方资料 →`
     },
     reuseScienceFrom: "snow_leopard",
-    vector: [2, 3, 1, 1, 2, 3, 3]
+    vector: [1.74, 1.95, 1.50, 1.42, 1.83, 2.00, 2.23]
   },
 
   {
@@ -392,7 +416,9 @@ export const animals = [
     iucnUrl: "https://www.iucnredlist.org/species/39866/10278553",
     tags: ["连接中枢", "5G信号", "候场中"],
     quote: "最⾼级的热闹，不是所有⼈都在说话，⽽是失散的信号重新连上了。",
+    quoteEn: "The best kind of buzz isn't everyone talking — it's lost signals reconnecting.",
     personalityName: "连接器",
+    personalityNameEn: "The Connector",
     personalityDesc: `普通的社交型人格，可能只是"会聊""会接话""不冷场"；但你已经进化到了另一层：你不是在参与连接，你本身就是连接。
 
 你能看见谁被落下、哪里断线、哪句话没被听懂、哪个场子表面热闹其实已经快散了。别人以为你只是好相处，事实上你做的是更难的事——把彼此不相干的人，重新编进同一个网里。
@@ -408,7 +434,7 @@ export const animals = [
       iucnHook: `想知道滇金丝猴为什么必须把"连接"当成生存大事？查看官方资料 →`
     },
     reuseScienceFrom: "yunnan_snub_monkey",
-    vector: [2, 2, 3, 3, 2, 1, 2]
+    vector: [1.91, 1.85, 2.01, 1.90, 1.89, 1.65, 1.90]
   }
 ];
 
@@ -435,12 +461,12 @@ export const animalNameToId = {
 };
 
 export const animalVectors = {
-  snow_leopard:       [2, 3, 1, 1, 2, 3, 3],
-  yunnan_snub_monkey: [2, 2, 3, 3, 2, 1, 2],
-  dhole:              [3, 3, 3, 3, 3, 3, 1],
-  black_necked_crane: [3, 2, 2, 2, 2, 2, 3],
-  red_panda:          [2, 2, 1, 1, 1, 1, 2],
-  asian_black_bear:   [2, 1, 1, 1, 3, 3, 3],
-  forest_musk_deer:   [1, 1, 1, 1, 1, 2, 2],
-  takin:              [2, 3, 3, 1, 2, 3, 1],
+  snow_leopard:       [1.74, 1.95, 1.50, 1.42, 1.83, 2.00, 2.23],
+  yunnan_snub_monkey: [1.91, 1.85, 2.01, 1.90, 1.89, 1.65, 1.90],
+  dhole:              [2.07, 2.08, 1.92, 1.84, 2.26, 2.07, 1.84],
+  black_necked_crane: [2.04, 1.80, 1.61, 1.60, 1.90, 1.88, 2.30],
+  red_panda:          [1.72, 1.71, 1.56, 1.54, 1.80, 1.69, 2.08],
+  forest_musk_deer:   [1.67, 1.65, 1.58, 1.52, 1.75, 1.70, 1.95],
+  asian_black_bear:   [1.73, 1.80, 1.79, 1.71, 2.14, 2.09, 1.88],
+  takin:              [1.80, 1.95, 1.95, 1.86, 1.97, 2.05, 1.92],
 };
