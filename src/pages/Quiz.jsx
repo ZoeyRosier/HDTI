@@ -149,7 +149,7 @@ export default function Quiz() {
               {localized.text}
             </h2>
 
-            <div className="space-y-3 mt-auto">
+            <div className="space-y-3 mt-8">
               {localized.options.map((opt, i) => {
                 const isSelected = currentAnswer === opt.label;
                 return (

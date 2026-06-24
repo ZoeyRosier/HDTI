@@ -262,9 +262,25 @@ export default function Result() {
           </h1>
 
           {/* 副标题：中文人格名 + 动物名（加粗+绿色系） */}
-          <p className="text-base font-bold tracking-[.08em] mb-5" style={{ color: theme.accent }}>
+          <p className="text-base font-bold tracking-[.08em] mb-4" style={{ color: theme.accent }}>
             {animal.personalityName} · {animal.name} {animal.nameEn.toUpperCase()}
           </p>
+
+          {/* IUCN 保护等级 */}
+          {animal.conservationStatus && (() => {
+            const iucnColors = { CR: '#b91c1c', EN: '#c4663f', VU: '#d97706', NT: '#b8860b', LC: '#6b7280' };
+            const color = iucnColors[animal.conservationStatus] || '#d97706';
+            return (
+              <div className="flex justify-center mb-4">
+                <span
+                  className="inline-flex items-center gap-1 text-[11px] font-bold px-3 py-1 rounded-full"
+                  style={{ background: `${color}22`, color, border: `1px solid ${color}44` }}
+                >
+                  IUCN · {animal.conservationStatus} {IUCN_LABELS[animal.conservationStatus]}
+                </span>
+              </div>
+            );
+          })()}
 
           {/* 标签（带背景色） */}
           <div className="flex flex-wrap justify-center gap-2 mb-6">
