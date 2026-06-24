@@ -16,7 +16,7 @@ function getAnimalThumb(code) {
 
 export default function Home() {
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { t, pickAnimal } = useI18n();
   const [totalCount, setTotalCount] = useState(null);
   const [rankings, setRankings] = useState(null);
   const [eggStats, setEggStats] = useState(null);
@@ -254,24 +254,27 @@ export default function Home() {
 
           {/* 动物卡片网格 */}
           <div className="grid grid-cols-5 gap-2.5 px-[18px]">
-            {baseAnimals.slice(0, 4).map(animal => (
+            {baseAnimals.slice(0, 4).map((raw) => {
+              const animal = pickAnimal(raw);
+              return (
               <div
-                key={animal.id}
+                key={raw.id}
                 className="flex flex-col items-center text-center p-2.5 rounded-[16px] border border-border bg-white cursor-pointer hover:border-primary-light hover:shadow-sm transition-all"
-                onClick={() => navigate(`/result?r=${animal.id}&preview=1`)}
+                onClick={() => navigate(`/result?r=${raw.id}&preview=1`)}
               >
                 <div className="text-[11px] text-text-muted mb-1 whitespace-nowrap">{animal.name}</div>
                 <div className="w-[52px] h-[52px] flex items-center justify-center mb-1.5">
                   <img
-                    src={getAnimalThumb(animal.code)}
+                    src={getAnimalThumb(raw.code)}
                     alt={animal.name}
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <div className="font-mono text-[13px] font-black text-text-heading whitespace-nowrap">{animal.code}</div>
+                <div className="font-mono text-[13px] font-black text-text-heading whitespace-nowrap">{raw.code}</div>
                 <div className="text-[10.5px] text-text-muted mt-0.5 whitespace-nowrap">{animal.personalityName}</div>
               </div>
-            ))}
+              );
+            })}
             {/* 彩蛋占位 */}
             <div
               className="flex flex-col items-center justify-center text-center p-2.5 rounded-[16px] border-[1.5px] border-[#5a5660]"
@@ -444,8 +447,7 @@ function FaqItem({ title, children, defaultOpen = false }) {
 
 /** 排行榜列表（双语） */
 function RankList({ rankings }) {
-  const { language } = useI18n();
-  const isEn = language === 'en';
+  const { pickAnimal, language } = useI18n();
   const medals = ['🥇', '🥈', '🥉'];
   const barWidths = ['100%', '79%', '66%'];
   const barColors = ['#3D5A47', '#6f8a4e', '#9bb079'];
@@ -453,12 +455,13 @@ function RankList({ rankings }) {
   return (
     <div className="space-y-[14px]">
       {rankings.items.map((item, idx) => {
-        const animal = baseAnimals.find(a => a.id === item.id);
+        const animal = pickAnimal(baseAnimals.find(a => a.id === item.id));
         if (!animal) return null;
-        const displayName = isEn ? animal.nameEn : animal.name;
-        const displayPersonality = isEn ? (animal.personalityNameEn || animal.personalityName) : animal.personalityName;
-        const displayQuote = isEn ? (animal.quoteEn || animal.quote) : animal.quote;
-        const iconFile = animal.code.replace('?', '');
+        const raw = baseAnimals.find(a => a.id === item.id);
+        const displayName = animal.name;
+        const displayPersonality = animal.personalityName;
+        const displayQuote = animal.quote;
+        const iconFile = raw.code.replace('?', '');
         return (
           <div key={item.id} className="flex items-center gap-[11px]">
             <div className="flex-none">
@@ -484,7 +487,7 @@ function RankList({ rankings }) {
               </div>
               {displayQuote && (
                 <div className="text-[11.5px] text-text-muted mt-1 truncate">
-                  {isEn ? `"${displayQuote}"` : `「${displayQuote}」`}
+                  {language === 'en' ? `"${displayQuote}"` : `「${displayQuote}」`}
                 </div>
               )}
               <div className="h-1.5 bg-[#eaf0e2] rounded-full mt-1.5 overflow-hidden">

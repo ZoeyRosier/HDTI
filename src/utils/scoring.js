@@ -141,16 +141,29 @@ export function vecToLabel(vec) {
   return vec.map(v => v <= 1.57 ? 'L' : v >= 2.13 ? 'H' : 'M');
 }
 
-export function getDimensionDesc(dimIndex, value) {
-  const descs = [
-    { L: "舒适区钉子户，没事不出门，出门也带GPS。", M: "会探索，但得先确认退路在哪，安全感选手。", H: "未知区域自动吸引，别人还在查攻略你已经出发了。" },
-    { L: "危险来了先消失，活着比赢更重要。", M: "先看一眼局势，值得打就打，不值得就优雅撤退。", H: "有人挑事？好，那就原地站住，正面接招。" },
-    { L: "一个人待着不叫孤独，叫自由。", M: "能独处也能合群，但超过三天的团建会让你想跑。", H: "身边没人会心慌，有人在旁边才能安心做事。" },
-    { L: "社交？等别人来找我吧，主动出击这事太累。", M: "不主动不拒绝，回消息看缘分，偶尔上线冒个泡。", H: "群里永远是你先说话，冷场超过5秒自动补位。" },
-    { L: "能躺着绝不坐着，把能量留给真正重要的事。", M: "能动能静，状态看心情——偶尔卷偶尔摆。", H: "闲下来比忙着更难受，永远有下一件事在排队" },
-    { L: "退一步海阔天空，没什么值得正面硬刚。", M: "多数时候和气生财，但碰到底线会突然变脸。", H: "我的东西就是我的，碰一下试试？后果自负。" },
-    { L: "老办法用得好好的，为什么要换？换了万一翻车。", M: "该守规矩的时候守，该变通的时候也不死磕。", H: "此路不通？没关系，地图上还有七条备选路线。" },
-  ];
+const DIM_DESCS = {
+  zh: [
+    { L: '舒适区钉子户，没事不出门，出门也带GPS。', M: '会探索，但得先确认退路在哪，安全感选手。', H: '未知区域自动吸引，别人还在查攻略你已经出发了。' },
+    { L: '危险来了先消失，活着比赢更重要。', M: '先看一眼局势，值得打就打，不值得就优雅撤退。', H: '有人挑事？好，那就原地站住，正面接招。' },
+    { L: '一个人待着不叫孤独，叫自由。', M: '能独处也能合群，但超过三天的团建会让你想跑。', H: '身边没人会心慌，有人在旁边才能安心做事。' },
+    { L: '社交？等别人来找我吧，主动出击这事太累。', M: '不主动不拒绝，回消息看缘分，偶尔上线冒个泡。', H: '群里永远是你先说话，冷场超过5秒自动补位。' },
+    { L: '能躺着绝不坐着，把能量留给真正重要的事。', M: '能动能静，状态看心情——偶尔卷偶尔摆。', H: '闲下来比忙着更难受，永远有下一件事在排队' },
+    { L: '退一步海阔天空，没什么值得正面硬刚。', M: '多数时候和气生财，但碰到底线会突然变脸。', H: '我的东西就是我的，碰一下试试？后果自负。' },
+    { L: '老办法用得好好的，为什么要换？换了万一翻车。', M: '该守规矩的时候守，该变通的时候也不死磕。', H: '此路不通？没关系，地图上还有七条备选路线。' },
+  ],
+  en: [
+    { L: 'Comfort-zone loyalist — rarely leaves unless necessary, and always knows the exit.', M: 'Explores, but only after confirming the escape route. Safety-first operator.', H: 'Unknown territory pulls you in while others are still reading the guide.' },
+    { L: 'When danger comes, disappear first — staying alive beats winning.', M: 'Read the room first; fight if worth it, retreat gracefully if not.', H: 'Someone picking a fight? Fine — stand your ground and meet it head-on.' },
+    { L: 'Being alone isn\'t loneliness — it\'s freedom.', M: 'Fine solo or in groups, but a three-day team offsite makes you want to run.', H: 'Uneasy without people nearby — you work best with someone in the room.' },
+    { L: 'Socializing? Let others come to me — initiating is too costly.', M: 'Neither initiate nor reject; replies depend on mood, occasional check-ins.', H: 'Always the first to speak in the group — silence over 5 seconds and you fill it.' },
+    { L: 'If you can lie down, never sit — save energy for what truly matters.', M: 'Can move or rest depending on mood — sometimes grind, sometimes coast.', H: 'Being idle feels worse than being busy — always another task queued up.' },
+    { L: 'Step back and the horizon widens — few things worth a head-on clash.', M: 'Mostly keep the peace, but cross the line and the mood shifts fast.', H: 'What\'s mine is mine — touch it and find out.' },
+    { L: 'The old way works fine — why change and risk a crash?', M: 'Follow rules when needed, flex when necessary — not rigid.', H: 'Road blocked? No problem — seven backup routes on the map.' },
+  ],
+};
+
+export function getDimensionDesc(dimIndex, value, lang = 'zh') {
+  const descs = DIM_DESCS[lang] ?? DIM_DESCS.zh;
   const level = value <= 1.57 ? 'L' : value >= 2.13 ? 'H' : 'M';
   return descs[dimIndex][level];
 }

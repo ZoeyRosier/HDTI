@@ -6,39 +6,28 @@ import { calculateResult, vecToLabel, getDimensionDesc, calcMatchRate } from '..
 import { readResultFromUrl, shareResult } from '../utils/share';
 import { incrementAnimalCount, getAllCounts } from '../utils/supabase';
 import { generatePoster } from '../utils/poster';
-
-/** 7维度定义：分为4个模型类别 */
-const DIMENSIONS = [
-  { id: 0, code: 'D1', name: '探索倾向', category: '行为模型' },
-  { id: 1, code: 'D2', name: '应激反应', category: '行为模型' },
-  { id: 2, code: 'D3', name: '群体依赖', category: '社交模型' },
-  { id: 3, code: 'D4', name: '社交主动性', category: '社交模型' },
-  { id: 4, code: 'D5', name: '行动频率', category: '驱动模型' },
-  { id: 5, code: 'D6', name: '领地意识', category: '驱动模型' },
-  { id: 6, code: 'D7', name: '适应灵活度', category: '策略模型' },
-];
+import { animalIconSrc } from '../utils/animalIcon';
+import {
+  getAnimalTheme,
+  getDimensionCategories,
+  getDimensionLabel,
+  dimensionsInCategory,
+  getIucnLabel,
+  formatQuote,
+  formatWildPopulation,
+  getRarityLabel,
+} from '../utils/animalProfileMeta';
+import ScienceCard from '../components/ScienceCard';
+import { useI18n, LangToggle } from '../i18n';
 
 /** 获取动物高清原图路径 */
 function getAnimalIcon(code) {
-  const filename = code.replace('?', '');
-  return `/animals_icon/${filename}.png`;
-}
-
-/** IUCN 保护等级中文映射 */
-const IUCN_LABELS = { CR: '极危', EN: '濒危', VU: '易危', NT: '近危', LC: '无危' };
-
-/**
- * 根据稀有度百分比返回稀有度描述
- */
-function getRarityLabel(pct) {
-  if (pct <= 1) return '极稀有';
-  if (pct <= 5) return '稀有';
-  if (pct <= 10) return '珍稀';
-  return '特别';
+  return animalIconSrc(code);
 }
 
 export default function Result() {
   const navigate = useNavigate();
+  const { t, language, pickAnimal } = useI18n();
   const [stats, setStats] = useState(null);
   const [copyToast, setCopyToast] = useState(false);
   const [posterUrl, setPosterUrl] = useState(null);
@@ -121,22 +110,21 @@ export default function Result() {
 
   if (!resultData) return null;
 
-  const { animal, matchRate, isSharedView, isEgg, userVec, isPreview } = resultData;
-  const isEggResult = animal.isEgg;
+  const { animal: rawAnimal, matchRate, isSharedView, isEgg, userVec, isPreview } = resultData;
+  const animal = pickAnimal(rawAnimal);
+  const isEggResult = rawAnimal.isEgg;
+  const theme = getAnimalTheme(rawAnimal);
+  const ringGradient = theme.ringGradient;
 
-  // 各彩蛋动物独立配色，普通版绿色
-  const EGG_THEMES = {
-    giant_panda: { heroBg: 'linear-gradient(180deg, #7a6528 0%, #5c4b1e 100%)', accent: '#C4956A', barFill: '#C4956A', circleBg: 'radial-gradient(circle, rgba(196,149,106,0.3) 0%, rgba(196,149,106,0.1) 70%)', sectionBg: '#faf6ef', headingColor: '#9a7b3c', dividerColor: '#e8d5b0', wildNumColor: '#C4956A', posterBg: 'linear-gradient(135deg, #9a7b3c, #7a6028)', posterText: '生成我的金色海报', ringGradient: 'conic-gradient(from 0deg, #C4956A, #f5d9a8, #9a7b3c, #f5d9a8, #C4956A)', badgeRgb: '154,123,60' },
-    clouded_leopard: { heroBg: 'linear-gradient(180deg, #3b2d5e 0%, #271d42 100%)', accent: '#b89adb', barFill: '#b89adb', circleBg: 'radial-gradient(circle, rgba(184,154,219,0.25) 0%, rgba(184,154,219,0.08) 70%)', sectionBg: '#f8f5fc', headingColor: '#5e3d8a', dividerColor: '#e0d4f0', wildNumColor: '#8b5fbf', posterBg: 'linear-gradient(135deg, #5e3d8a, #3b2d5e)', posterText: '生成我的暗夜海报', ringGradient: 'conic-gradient(from 0deg, #b89adb, #6b3fa0, #e0c4f7, #6b3fa0, #b89adb)', badgeRgb: '94,61,138' },
-    chinese_monal: { heroBg: 'linear-gradient(180deg, #5c3a6e 0%, #2e4738 100%)', accent: '#e8a0c8', barFill: 'linear-gradient(90deg, #e8a0c8, #a8d8ea, #b8e6a0)', circleBg: 'radial-gradient(circle, rgba(232,160,200,0.2) 0%, rgba(168,216,234,0.1) 70%)', sectionBg: '#faf5f8', headingColor: '#8a3d6e', dividerColor: '#f0d4e8', wildNumColor: '#c4669f', posterBg: 'linear-gradient(135deg, #8a3d6e, #2e6b5a)', posterText: '生成我的彩虹海报', ringGradient: 'conic-gradient(from 0deg, #e8a0c8, #a8d8ea, #b8e6a0, #f0d080, #e8a0c8)', badgeRgb: '138,61,110' },
-    snow_leopard_extreme: { heroBg: 'linear-gradient(180deg, #2c3e50 0%, #1a252f 100%)', accent: '#7ec8e3', barFill: '#7ec8e3', circleBg: 'radial-gradient(circle, rgba(126,200,227,0.25) 0%, rgba(126,200,227,0.08) 70%)', sectionBg: '#f4f9fc', headingColor: '#2c5d7a', dividerColor: '#d0e8f5', wildNumColor: '#3d8ab0', posterBg: 'linear-gradient(135deg, #2c5d7a, #1a252f)', posterText: '生成我的冰蓝海报', ringGradient: 'conic-gradient(from 0deg, #7ec8e3, #ffffff, #4a9fbf, #ffffff, #7ec8e3)', badgeRgb: '44,93,122' },
-    monkey_extreme: { heroBg: 'linear-gradient(180deg, #1a3a4a 0%, #0f2830 100%)', accent: '#4de8c2', barFill: '#4de8c2', circleBg: 'radial-gradient(circle, rgba(77,232,194,0.2) 0%, rgba(77,232,194,0.06) 70%)', sectionBg: '#f2fbf8', headingColor: '#1a6b5a', dividerColor: '#c8f0e4', wildNumColor: '#2a9b80', posterBg: 'linear-gradient(135deg, #1a6b5a, #0f2830)', posterText: '生成我的霓虹海报', ringGradient: 'conic-gradient(from 0deg, #4de8c2, #0a5e4a, #80fff0, #0a5e4a, #4de8c2)', badgeRgb: '26,107,90' },
-  };
-  const DEFAULT_THEME = { heroBg: 'linear-gradient(180deg, #3D5A47 0%, #2e4738 100%)', accent: '#8fb872', barFill: '#8fb872', circleBg: 'radial-gradient(circle, rgba(143,184,114,0.2) 0%, rgba(143,184,114,0.08) 70%)', sectionBg: '#F5F7F2', headingColor: '#3D5A47', dividerColor: '#dce6d4', wildNumColor: '#c4663f', posterBg: '#3D5A47', posterText: '生成我的分享海报' };
-  const theme = isEggResult ? (EGG_THEMES[animal.id] || EGG_THEMES.giant_panda) : DEFAULT_THEME;
-
-  const scienceAnimal = animal.reuseScienceFrom ? animalsMap[animal.reuseScienceFrom] : animal;
+  const scienceSource = rawAnimal.reuseScienceFrom ? animalsMap[rawAnimal.reuseScienceFrom] : rawAnimal;
+  const scienceAnimal = pickAnimal(scienceSource);
   const species = scienceAnimal?.species;
+  const wildPop = formatWildPopulation(animal.wildPopulation, language);
+  const badgeLabel = isPreview
+    ? t('result.badgePreview')
+    : isEggResult
+      ? t('result.badgeEgg')
+      : t('result.badgeResult');
 
   async function handleShare() {
     setPosterLoading(true);
@@ -176,11 +164,14 @@ export default function Result() {
             <span className="text-sm">🐾</span>
             <span className="font-mono text-xs text-white/90 tracking-wide">HDTI</span>
             <span className="w-px h-3 bg-white/20" />
-            <span className="text-xs text-white/60">首页</span>
+            <span className="text-xs text-white/60">{t('result.navHome')}</span>
           </div>
-          <span className="font-mono text-xs text-white/50 tracking-wide">
-            {isPreview ? '动物档案 · PROFILE' : isEggResult ? '彩蛋结果 · EGG' : '测试结果 · RESULT'}
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-xs text-white/50 tracking-wide hidden sm:inline">
+              {badgeLabel}
+            </span>
+            <LangToggle variant="dark" />
+          </div>
         </div>
 
         <motion.div
@@ -198,11 +189,11 @@ export default function Result() {
               className="mb-4"
             >
               <span className="inline-block bg-white/15 text-white text-sm font-bold px-5 py-2 rounded-full border border-white/20">
-                🎊 你触发了隐藏彩蛋
+                {t('result.eggCelebrate')}
               </span>
               {stats && stats.percentage && (
                 <p className="font-mono text-[11px] text-white/50 tracking-[.15em] mt-3">
-                  RARE EGG · {stats.percentage}% UNLOCKED
+                  {t('result.eggRareMono', { percent: stats.percentage })}
                 </p>
               )}
             </motion.div>
@@ -211,7 +202,7 @@ export default function Result() {
           {/* 副标题 */}
           {!isEggResult && (
             <p className="font-mono text-[11px] text-white/50 tracking-[.15em] mb-6">
-              YOUR HENGDUAN ANIMAL
+              {t('result.heroMono')}
             </p>
           )}
 
@@ -222,19 +213,19 @@ export default function Result() {
                 {/* 最外层：实体渐变边框环 */}
                 <div
                   className="absolute inset-[-10px] rounded-full"
-                  style={{ background: theme.ringGradient, padding: '5px' }}
+                  style={{ background: ringGradient, padding: '5px' }}
                 >
                   <div className="w-full h-full rounded-full" style={{ background: theme.heroBg }} />
                 </div>
                 {/* 旋转光效层 */}
                 <div
                   className="absolute inset-[-4px] rounded-full animate-[spin_4s_linear_infinite]"
-                  style={{ background: theme.ringGradient, opacity: 0.85 }}
+                  style={{ background: ringGradient, opacity: 0.85 }}
                 />
                 {/* 模糊辉光层 */}
                 <div
                   className="absolute inset-[-4px] rounded-full blur-[6px]"
-                  style={{ background: theme.ringGradient, opacity: 0.4 }}
+                  style={{ background: ringGradient, opacity: 0.4 }}
                 />
               </>
             )}
@@ -263,7 +254,7 @@ export default function Result() {
 
           {/* 副标题：中文人格名 + 动物名（加粗+绿色系） */}
           <p className="text-base font-bold tracking-[.08em] mb-5" style={{ color: theme.accent }}>
-            {animal.personalityName} · {animal.name} {animal.nameEn.toUpperCase()}
+            {animal.personalityName} · {animal.name}{language === 'zh' ? ` ${rawAnimal.nameEn?.toUpperCase?.()}` : ''}
           </p>
 
           {/* 标签（带背景色） */}
@@ -283,7 +274,7 @@ export default function Result() {
           {!isPreview && (
           <div className="mb-5">
             <div className="flex justify-between items-baseline mb-2">
-              <span className="text-sm text-white/70">与{animal.name}的匹配度</span>
+              <span className="text-sm text-white/70">{t('result.matchWith', { name: animal.name })}</span>
               <span className="font-num text-[28px] font-extrabold text-white">
                 {matchRate}<span className="text-base text-white/70">%</span>
               </span>
@@ -304,21 +295,19 @@ export default function Result() {
           {!isPreview && stats && stats.percentage && (
             <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 mb-6">
               <span className="text-sm">{isEggResult ? '🏆' : '🌿'}</span>
-              <span className="text-xs text-white/80">
-                仅 <b className="font-num">{stats.percentage}%</b> 的人是{animal.name} · {getRarityLabel(parseFloat(stats.percentage))}
-              </span>
+              <span className="text-xs text-white/80" dangerouslySetInnerHTML={{
+                __html: t('result.rarityPeople', {
+                  percent: stats.percentage,
+                  name: animal.name,
+                  label: getRarityLabel(parseFloat(stats.percentage), t),
+                }),
+              }} />
             </div>
           )}
 
           {/* 金句 */}
           <p className="text-[15px] md:text-base text-white/75 leading-[1.9] mt-2 mb-8 italic whitespace-pre-line text-center">
-            {(() => {
-              const parts = animal.quote.split('，');
-              if (parts.length > 2) {
-                return `"${parts.slice(0, 2).join('，')}，\n${parts.slice(2).join('，')}"`;
-              }
-              return `"${animal.quote}"`;
-            })()}
+            {formatQuote(animal.quote, language)}
           </p>
 
           {/* 下滑提示（可点击） */}
@@ -329,7 +318,7 @@ export default function Result() {
             transition={{ repeat: Infinity, duration: 1.8 }}
             onClick={() => document.getElementById('result-detail')?.scrollIntoView({ behavior: 'smooth' })}
           >
-            <p>下滑，看 TA 的真实处境</p>
+            <p>{t('result.scrollHint')}</p>
             <p className="mt-1">↓</p>
           </motion.div>
         </motion.div>
@@ -356,34 +345,35 @@ export default function Result() {
                   viewport={{ once: true }}
                   className="bg-white rounded-[20px] p-6 border border-border"
                 >
-                  <p className="text-center text-xs text-text-muted mb-4 tracking-wide">
-                    一个温柔的对比 · <span className="font-mono">A QUIET CONTRAST</span>
-                  </p>
+                  <p className="text-center text-xs text-text-muted mb-4 tracking-wide" dangerouslySetInnerHTML={{ __html: t('result.contrastTitle') }} />
                   <div className="flex items-center">
                     <div className="flex-1 text-center">
                       <div className="font-num text-[28px] font-extrabold text-text-heading">
                         {stats.myCount.toLocaleString()}
                       </div>
                       <div className="text-xs text-text-muted mt-1">
-                        人测出了{animal.name}
+                        {t('result.peopleGot', { name: animal.name })}
                       </div>
                     </div>
                     <div className="w-px h-10 bg-border" />
                     <div className="flex-1 text-center">
                       <div className="font-num text-[28px] font-extrabold" style={{ color: theme.wildNumColor }}>
-                        {animal.wildPopulation.replace(/[（(].+[）)]/g, '').trim()}
+                        {wildPop.number}
                       </div>
                       <div className="text-xs text-text-muted mt-1">
-                        {animal.wildPopulation.match(/[（(](.+)[）)]/) ? animal.wildPopulation.match(/[（(](.+)[）)]/)[1].replace('中国特有', '中国特有，野外') + '仅剩' : '野外仅剩'}
+                        {wildPop.label}
                       </div>
                     </div>
                   </div>
-                  {/* 情感文案 */}
                   <div className="mt-5 bg-bg-tag rounded-[14px] px-4 py-3 text-center">
-                    <p className="text-[13px] text-text-body leading-relaxed">
-                      屏幕里，{animal.name.replace(/[「「].+[」」]/g, '')}很常见。<br />
-                      山林里，它正在变成一个数字。
-                    </p>
+                    <p
+                      className="text-[13px] text-text-body leading-relaxed"
+                      dangerouslySetInnerHTML={{
+                        __html: t('result.contrastEmotional', {
+                          name: animal.name.replace(/[「「].+[」」]/g, ''),
+                        }),
+                      }}
+                    />
                   </div>
                 </motion.div>
               )}
@@ -397,7 +387,7 @@ export default function Result() {
               >
                 <h3 className="text-base font-black text-text-heading mb-4 flex items-center gap-2">
                   <span className="w-1 h-4 rounded-full" style={{ background: theme.headingColor }} />
-                  你的横断山原型
+                  {t('result.archetype')}
                 </h3>
                 <p className="text-[13.5px] text-text-body leading-[1.85] whitespace-pre-line">
                   {animal.personalityDesc}
@@ -411,7 +401,7 @@ export default function Result() {
                 <>
                   <ScienceCard
                     emoji="🏔"
-                    title="物种档案"
+                    title={t('result.speciesProfile')}
                     subtitle="SPECIES FILE"
                     content={species.habitat}
                     defaultOpen
@@ -420,7 +410,7 @@ export default function Result() {
                   />
                   <ScienceCard
                     emoji="🧗"
-                    title="生存绝技"
+                    title={t('result.survivalSkill')}
                     subtitle="SURVIVAL SKILLS"
                     content={species.skill}
                     isEgg={isEggResult}
@@ -428,7 +418,7 @@ export default function Result() {
                   />
                   <ScienceCard
                     emoji="💡"
-                    title="冷知识"
+                    title={t('result.funFact')}
                     subtitle="DID YOU KNOW"
                     content={species.funFact}
                     isEgg={isEggResult}
@@ -436,10 +426,10 @@ export default function Result() {
                   />
                   <ScienceCard
                     emoji="🚨"
-                    title="保护现状"
+                    title={t('result.conservation')}
                     subtitle="STATUS"
                     content={species.statusDesc}
-                    badge={`${animal.conservationStatus} · ${IUCN_LABELS[animal.conservationStatus] || animal.conservationStatus}`}
+                    badge={`${rawAnimal.conservationStatus} · ${getIucnLabel(rawAnimal.conservationStatus, language)}`}
                     isEgg={isEggResult}
                     accentColor={isEggResult ? theme.accent : undefined}
                     defaultOpen
@@ -460,19 +450,19 @@ export default function Result() {
               <span className="w-9 h-9 rounded-[10px] bg-[#e8f5e9] flex items-center justify-center text-lg flex-none">🔗</span>
               <div className="flex-1 min-w-0">
                 <a
-                  href={animal.iucnUrl}
+                  href={rawAnimal.iucnUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[13px] font-bold text-text-heading leading-snug hover:text-primary transition-colors cursor-pointer"
                 >
-                  {(species?.iucnHook || `了解${animal.name}的更多信息 →`).replace(/ →$/, ' ➡️')}
+                  {(species?.iucnHook || t('result.iucnMore', { name: animal.name })).replace(/ →$/, ' ➡️')}
                 </a>
                 <p
                   className="text-[11px] text-text-muted font-mono mt-0.5 cursor-pointer hover:text-primary transition-colors truncate"
                   title="点击复制链接"
-                  onClick={(e) => { e.preventDefault(); navigator.clipboard.writeText(animal.iucnUrl); setCopyToast(true); setTimeout(() => setCopyToast(false), 2000); }}
+                  onClick={(e) => { e.preventDefault(); navigator.clipboard.writeText(rawAnimal.iucnUrl); setCopyToast(true); setTimeout(() => setCopyToast(false), 2000); }}
                 >
-                  {animal.iucnUrl}
+                  {rawAnimal.iucnUrl}
                 </p>
               </div>
               <a
@@ -485,22 +475,22 @@ export default function Result() {
           </motion.div>
 
           {/* 7维度画像 */}
-          {(userVec || animal.vector) && (
+          {(userVec || rawAnimal.vector) && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="mt-6 bg-white rounded-[20px] border border-border p-6"
             >
-              <h3 className="text-lg font-black text-text-heading mb-1">7维度画像</h3>
+              <h3 className="text-lg font-black text-text-heading mb-1">{t('result.dimTitle')}</h3>
               <p className="text-[11px] text-text-muted font-mono tracking-wide mb-5">
-                {isPreview ? 'DIMENSION PROFILE · 该动物的标准维度画像' : 'DIMENSION PROFILE · 基于你的作答向量生成'}
+                {isPreview ? t('detail.dimSubtitle') : t('result.dimSubtitleUser')}
               </p>
 
               {(() => {
-                const displayVec = isPreview ? animal.vector : (userVec || animal.vector);
+                const displayVec = isPreview ? rawAnimal.vector : (userVec || rawAnimal.vector);
                 const labels = vecToLabel(displayVec);
-                const categories = [...new Set(DIMENSIONS.map(d => d.category))];
+                const categories = getDimensionCategories(language);
                 return categories.map(cat => (
                   <div key={cat} className="mb-5 last:mb-0">
                     <div className="flex items-center gap-2 mb-3">
@@ -508,9 +498,9 @@ export default function Result() {
                       <div className="flex-1 h-px" style={{ background: theme.dividerColor }} />
                     </div>
                     <div className="space-y-4">
-                      {DIMENSIONS.filter(d => d.category === cat).map(dim => {
+                      {dimensionsInCategory(cat, language).map(dim => {
                         const level = labels[dim.id];
-                        const desc = getDimensionDesc(dim.id, displayVec[dim.id]);
+                        const desc = getDimensionDesc(dim.id, displayVec[dim.id], language);
                         const badgeRgb = isEggResult ? theme.badgeRgb : '34,120,60';
                         const badgeBg = level === 'H' ? `rgba(${badgeRgb},0.22)`
                           : level === 'M' ? `rgba(${badgeRgb},0.13)`
@@ -520,7 +510,7 @@ export default function Result() {
                         return (
                           <div key={dim.id}>
                             <div className="flex items-center gap-2 mb-1.5">
-                              <span className="text-[13px] font-bold text-text-heading">{dim.code} {dim.name}</span>
+                              <span className="text-[13px] font-bold text-text-heading">{dim.code} {getDimensionLabel(dim, language)}</span>
                               <span
                                 className="text-[11px] font-bold px-1.5 py-[1px] rounded-[4px] inline-flex items-center justify-center"
                                 style={{ background: badgeBg, color: theme.headingColor }}
@@ -552,7 +542,7 @@ export default function Result() {
           )}
 
           {/* 相似动物人格 */}
-          {animal.vector && (
+          {rawAnimal.vector && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -560,31 +550,31 @@ export default function Result() {
               className="mt-6 rounded-[20px] border p-6"
               style={{ background: isEggResult ? theme.sectionBg : '#ffffff', borderColor: isEggResult ? theme.dividerColor : undefined }}
             >
-              <h3 className="text-lg font-black mb-1" style={{ color: theme.headingColor }}>相似人格</h3>
-              <p className="text-[11px] font-mono tracking-wide mb-5" style={{ color: isEggResult ? theme.accent : '#8a9379' }}>SIMILAR TYPES · 与你最相近的横断山兽</p>
+              <h3 className="text-lg font-black mb-1" style={{ color: theme.headingColor }}>{t('result.similarTitle')}</h3>
+              <p className="text-[11px] font-mono tracking-wide mb-5" style={{ color: isEggResult ? theme.accent : '#8a9379' }}>{t('result.similarSubtitle')}</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {(() => {
-                  const currentVec = animal.vector;
+                  const currentVec = rawAnimal.vector;
                   const similar = animals
-                    .filter(a => a.id !== animal.id && a.vector)
-                    .map(a => ({ ...a, match: calcMatchRate(currentVec, a.vector) }))
+                    .filter(a => a.id !== rawAnimal.id && a.vector)
+                    .map(a => ({ raw: a, localized: pickAnimal(a), match: calcMatchRate(currentVec, a.vector) }))
                     .sort((a, b) => b.match - a.match)
                     .slice(0, 4);
-                  return similar.map(a => (
+                  return similar.map(({ raw: a, localized: la }) => (
                     <div
                       key={a.id}
                       className="flex flex-col items-center text-center p-3 rounded-[14px] border transition-colors cursor-pointer"
                       style={{ borderColor: isEggResult ? theme.dividerColor : undefined, background: isEggResult ? '#ffffff' : undefined }}
                       onClick={() => navigate(`/animals/${a.id}`)}
                     >
-                      <div className="text-[11px] mb-1" style={{ color: isEggResult ? theme.headingColor : '#8a9379' }}>{a.name}</div>
+                      <div className="text-[11px] mb-1" style={{ color: isEggResult ? theme.headingColor : '#8a9379' }}>{la.name}</div>
                       <img
                         src={`/animals_icon/${a.code.replace('?', '')}.png`}
-                        alt={a.name}
+                        alt={la.name}
                         className="w-12 h-12 object-contain mb-2"
                       />
                       <div className="font-mono text-sm font-black" style={{ color: theme.headingColor }}>{a.code}</div>
-                      <div className="text-xs mt-0.5" style={{ color: isEggResult ? theme.accent : '#8a9379' }}>{a.personalityName}</div>
+                      <div className="text-xs mt-0.5" style={{ color: isEggResult ? theme.accent : '#8a9379' }}>{la.personalityName}</div>
                     </div>
                   ));
                 })()}
@@ -600,7 +590,7 @@ export default function Result() {
                 className="w-full py-4 rounded-[18px] text-white font-bold text-base cursor-pointer transition-opacity hover:opacity-90"
                 style={{ background: theme.posterBg }}
               >
-                去测测你是哪种横断山兽 →
+                {t('result.previewCta')}
               </button>
             ) : (
               <>
@@ -610,7 +600,7 @@ export default function Result() {
                   className="w-full py-4 rounded-[18px] text-white font-bold text-base cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-60 disabled:cursor-wait"
                   style={{ background: theme.posterBg }}
                 >
-                  {posterLoading ? '⏳ 海报生成中...' : `🎴 ${theme.posterText}`}
+                  {posterLoading ? t('result.posterLoading') : `🎴 ${isEggResult ? t('result.posterBtnEgg') : t('result.posterBtn')}`}
                 </button>
 
                 <div className="flex gap-3">
@@ -618,23 +608,22 @@ export default function Result() {
                     onClick={() => { sessionStorage.removeItem('hdti_answers'); navigate('/quiz'); }}
                     className="flex-1 bg-white border border-border text-text-secondary py-3.5 rounded-[18px] text-sm font-medium hover:border-primary-light transition-colors cursor-pointer"
                   >
-                    ↻ 再测一次
+                    {t('result.retake')}
                   </button>
                   <button
                     onClick={() => navigate('/animals')}
                     className="flex-1 bg-white border border-border text-text-secondary py-3.5 rounded-[18px] text-sm font-medium hover:border-primary-light transition-colors cursor-pointer"
                   >
-                    探索其他动物 →
+                    {t('result.exploreAnimals')}
                   </button>
                 </div>
               </>
             )}
           </div>
 
-          {/* 页脚 */}
           <div className="text-center mt-8 text-[11px] text-text-tertiary leading-[1.7]">
-            HDTI · 横断山脉动物人格测试<br />
-            <span className="text-text-muted">🌿 了解，是保护的第一步</span>
+            {t('gallery.footer1')}<br />
+            <span className="text-text-muted">{t('result.footerTagline')}</span>
           </div>
         </div>
       </div>
@@ -662,16 +651,16 @@ export default function Result() {
                   onClick={handleDownloadPoster}
                   className="flex-1 bg-white text-text-heading py-3 rounded-[14px] text-sm font-bold cursor-pointer hover:bg-gray-50 transition-colors"
                 >
-                  保存图片
+                  {t('result.posterSave')}
                 </button>
                 <button
                   onClick={() => setPosterUrl(null)}
                   className="flex-1 bg-white/20 text-white py-3 rounded-[14px] text-sm font-medium cursor-pointer hover:bg-white/30 transition-colors"
                 >
-                  关闭
+                  {t('result.posterClose')}
                 </button>
               </div>
-              <p className="text-center text-white/60 text-xs mt-3">长按图片也可保存到相册</p>
+              <p className="text-center text-white/60 text-xs mt-3">{t('result.posterHint')}</p>
             </motion.div>
           </motion.div>
         )}
@@ -686,66 +675,10 @@ export default function Result() {
             exit={{ opacity: 0, y: 20 }}
             className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-text-heading text-white text-sm px-5 py-2.5 rounded-full shadow-lg z-50"
           >
-            链接已复制 ✓
+            {t('result.linkCopied')}
           </motion.div>
         )}
       </AnimatePresence>
     </div>
-  );
-}
-
-/** 科普手风琴卡片 */
-function ScienceCard({ emoji, title, subtitle, content, badge, defaultOpen = false, isEgg, accentColor }) {
-  const [open, setOpen] = useState(defaultOpen);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="bg-white rounded-[18px] border border-border overflow-hidden"
-    >
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 cursor-pointer"
-      >
-        <span className="flex items-center gap-3">
-          <span className="w-9 h-9 rounded-[10px] bg-bg-tag flex items-center justify-center text-lg flex-none">
-            {emoji}
-          </span>
-          <span className="text-left">
-            <span className="block text-sm font-bold text-text-heading">{title}</span>
-            <span className="block font-mono text-[9px] tracking-[.1em]" style={{ color: accentColor || (isEgg ? '#C4956A' : '#8a9379') }}>
-              {subtitle}
-            </span>
-          </span>
-        </span>
-        <span className="flex items-center gap-2">
-          {badge && (
-            <span className="text-[10px] bg-accent-warm/10 text-accent-warm font-bold px-2 py-0.5 rounded">
-              {badge}
-            </span>
-          )}
-          <span className={`text-text-muted text-sm transition-transform duration-200 ${open ? 'rotate-180' : ''}`}>
-            ▾
-          </span>
-        </span>
-      </button>
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="overflow-hidden"
-          >
-            <div className="px-5 pb-5 text-[13px] text-text-body leading-[1.8] whitespace-pre-line">
-              {content}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
   );
 }
