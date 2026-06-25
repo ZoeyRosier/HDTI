@@ -13,7 +13,7 @@ export default {
     totalCount: '<b>{count}</b> people have completed the test',
     start: 'Start Test',
     startSub: 'START →',
-    matchBtn: 'Friend Match — Find Your Animal Duo',
+    matchBtn: 'Friend Match',
     matchSub: 'MATCH →',
     viewLast: '↻ View Last Result',
     hook1: 'Unlock <b>species conservation facts</b> after the test',
