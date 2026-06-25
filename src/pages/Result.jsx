@@ -170,7 +170,7 @@ export default function Result() {
   return (
     <div className="min-h-dvh">
       {/* ========== 第一屏：英雄区 ========== */}
-      <div className="min-h-dvh flex flex-col items-center justify-center relative px-4 pt-12 pb-8" style={{ background: theme.heroBg }}>
+      <div className="min-h-dvh flex flex-col items-center relative px-4 pt-14 pb-8" style={{ background: theme.heroBg }}>
 
         {/* 顶部导航 */}
         <div className="absolute top-0 left-0 right-0 flex justify-between items-center px-4 py-3">
@@ -189,7 +189,7 @@ export default function Result() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full max-w-md text-center"
+          className="w-full max-w-md text-center flex-1 flex flex-col justify-center"
         >
           {/* 彩蛋提示 */}
           {isEggResult && (
@@ -218,7 +218,7 @@ export default function Result() {
           )}
 
           {/* 动物大图 */}
-          <div className="relative w-[160px] h-[160px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px] mx-auto mb-5">
+          <div className="relative w-[200px] h-[200px] md:w-[240px] md:h-[240px] mx-auto mb-5">
             {isEggResult && (
               <>
                 {/* 最外层：实体渐变边框环 */}
