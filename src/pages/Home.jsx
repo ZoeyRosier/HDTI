@@ -11,7 +11,7 @@ const AVATAR_BG = '#ffffff';
 /** 根据动物code获取缩略头像路径（150px，20-35KB） */
 function getAnimalThumb(code) {
   const filename = code.replace('?', '');
-  return `/animals_icon/thumb/${filename}.png`;
+  return `/animals_icon/${filename}.png`;
 }
 
 export default function Home() {
@@ -415,6 +415,10 @@ export default function Home() {
         <div className="text-center mt-[22px] text-[11px] text-text-tertiary leading-[1.7] pb-4">
           {t('home.footer1')}<br />
           <span className="text-text-footer">{t('home.footer2')}</span>
+          <br />
+          <span className="text-text-muted">
+            灵感致敬：<a href="https://www.16personalities.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">MBTI</a> · <a href="https://sbti-test.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">SBTI</a>
+          </span>
         </div>
       </div>
     </div>
