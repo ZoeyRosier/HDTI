@@ -299,10 +299,6 @@ export async function generatePoster({ animal, matchRate, homeUrl, stats }) {
     ctx.fillText(` 测出`, textX + line3aW + numW + midW + pctW, textCenterY + 66);
   }
 
-  // 导出
-  return new Promise((resolve) => {
-    canvas.toBlob((blob) => {
-      resolve(URL.createObjectURL(blob));
-    }, 'image/png');
-  });
+  // 导出为 data URL（兼容微信长按保存）
+  return canvas.toDataURL('image/png');
 }

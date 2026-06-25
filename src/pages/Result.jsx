@@ -159,26 +159,12 @@ export default function Result() {
 
   function handleDownloadPoster() {
     if (!posterUrl) return;
-    // 移动端 blob URL 无法通过 <a download> 保存，尝试转为 data URL
-    fetch(posterUrl)
-      .then(r => r.blob())
-      .then(blob => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const a = document.createElement('a');
-          a.href = reader.result;
-          a.download = `HDTI_${animal.code}_海报.png`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        };
-        reader.readAsDataURL(blob);
-      })
-      .catch(() => {
-        // 降级：提示用户长按保存
-        setCopyToast(true);
-        setTimeout(() => setCopyToast(false), 2000);
-      });
+    const a = document.createElement('a');
+    a.href = posterUrl;
+    a.download = `HDTI_${animal.code}_海报.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 
   return (
