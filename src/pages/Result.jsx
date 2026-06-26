@@ -189,7 +189,7 @@ export default function Result() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full max-w-md text-center flex-1 flex flex-col justify-center"
+          className="w-full max-w-md text-center flex-1 flex flex-col items-center justify-center"
         >
           {/* 彩蛋提示 */}
           {isEggResult && (
@@ -299,7 +299,7 @@ export default function Result() {
 
           {/* 匹配度 */}
           {!isPreview && (
-          <div className="mb-5">
+          <div className="mb-5 w-full">
             <div className="flex justify-between items-baseline mb-2">
               <span className="text-sm text-white/70">与{animal.name}的匹配度</span>
               <span className="font-num text-[28px] font-extrabold text-white">
