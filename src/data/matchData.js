@@ -362,9 +362,11 @@ export function generatePairCopy(idA, idB, lang, compatRate = 65) {
     pathTags[h % pathTags.length],
     pathTags[(h + 1) % pathTags.length],
     compatRate >= HIGH_COMPAT_THRESHOLD
-      ? lang === 'zh'
-        ? '默契天成'
-        : 'Natural sync'
+      ? (path === 'predator_prey'
+          ? (lang === 'zh' ? '棋逢对手' : 'Worthy rivals')
+          : path === 'potential_competition'
+            ? (lang === 'zh' ? '同台较量' : 'Head to head')
+            : (lang === 'zh' ? '默契天成' : 'Natural sync'))
       : compatRate < 65
         ? lang === 'zh'
           ? '反差CP'
