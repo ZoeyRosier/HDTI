@@ -320,11 +320,13 @@ export default function Result() {
 
           {/* 稀有度 */}
           {!isPreview && stats && stats.percentage && (
-            <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 mb-6">
-              <span className="text-sm">{isEggResult ? '🏆' : '🌿'}</span>
-              <span className="text-xs text-white/80">
-                仅 <b className="font-num">{stats.percentage}%</b> 的人是{animal.name} · {getRarityLabel(parseFloat(stats.percentage))}
-              </span>
+            <div className="flex justify-center mb-6">
+              <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-2">
+                <span className="text-sm">{isEggResult ? '🏆' : '🌿'}</span>
+                <span className="text-xs text-white/80">
+                  仅 <b className="font-num">{stats.percentage}%</b> 的人是{animal.name} · {getRarityLabel(parseFloat(stats.percentage))}
+                </span>
+              </div>
             </div>
           )}
 
