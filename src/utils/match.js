@@ -41,12 +41,21 @@ export function getPairDimensions(animalAId, animalBId, lang) {
   }));
 }
 
-/** 两动物原型向量契合度（0–100） */
+/** 两动物原型向量契合度（0–100） — 基于所有动物对的距离分布归一化 */
 export function calcPairCompatibility(animalAId, animalBId) {
   const vecA = getAnimalVector(animalAId);
   const vecB = getAnimalVector(animalBId);
   if (!vecA || !vecB) return 65;
-  return calcMatchRate(vecA, vecB);
+
+  const dist = vecA.reduce((s, v, i) => s + Math.abs(v - vecB[i]), 0);
+
+  // 所有8只基础动物对之间的距离范围：min≈0.34, max≈2.48
+  // 线性映射到 [35%, 95%]
+  const PAIR_DIST_MIN = 0.34;
+  const PAIR_DIST_MAX = 2.48;
+  const clamped = Math.max(PAIR_DIST_MIN, Math.min(PAIR_DIST_MAX, dist));
+  const rate = Math.round(95 - ((clamped - PAIR_DIST_MIN) / (PAIR_DIST_MAX - PAIR_DIST_MIN)) * 60);
+  return Math.max(35, Math.min(95, rate));
 }
 
 /**
@@ -144,8 +153,8 @@ export function getMatchResult(animalAId, animalBId, lang) {
   const copy = generatePairCopy(animalAId, animalBId, lang, compatRate);
   const ecology = getPairEcologySummary(animalAId, animalBId, lang);
   const dimensions = getPairDimensions(animalAId, animalBId, lang);
-  const alignedDims = dimensions.filter((d) => d.gap < 0.35).length;
-  const divergentDims = dimensions.filter((d) => d.gap >= 0.7).length;
+  const alignedDims = dimensions.filter((d) => d.gap < 0.15).length;
+  const divergentDims = dimensions.filter((d) => d.gap >= 0.35).length;
 
   return {
     compatRate,
@@ -182,7 +191,7 @@ export function loadMatchSession() {
 
 /** @param {number} rate */
 export function getInterpretationTier(rate) {
-  if (rate >= 80) return 'high';
+  if (rate >= 70) return 'high';
   if (rate >= 50) return 'mid';
   return 'low';
 }
