@@ -363,15 +363,15 @@ export function generatePairCopy(idA, idB, lang, compatRate = 65) {
     pathTags[(h + 1) % pathTags.length],
     compatRate >= HIGH_COMPAT_THRESHOLD
       ? lang === 'zh'
-        ? '向量同频'
-        : 'Vector sync'
+        ? '默契天成'
+        : 'Natural sync'
       : compatRate < 65
         ? lang === 'zh'
           ? '反差CP'
           : 'Contrast duo'
         : lang === 'zh'
-          ? '中等磨合'
-          : 'Moderate tuning',
+          ? '错位拼图'
+          : 'Offset puzzle',
   ];
 
   return {
