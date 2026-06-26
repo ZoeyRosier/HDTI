@@ -215,5 +215,9 @@ export default {
     errorSame: '不能与自己进行生态匹配',
     errorNoFriend: '请先识别好友的动物原型',
     retake: '🔄 还没测？先去测一次',
+    noResultTitle: '你还没测过',
+    noResultDesc: '先完成测试，看看你是哪种横断山兽，测完自动回来匹配',
+    goTestBtn: '🐾 去测测我是谁',
+    goTestHint: '16道题 · 约2分钟 · 测完自动回来匹配',
   },
 };

@@ -622,6 +622,26 @@ export default function Result() {
               </button>
             ) : (
               <>
+                {/* 如果有待匹配的好友，显示回去匹配按钮 */}
+                {(() => {
+                  const pendingFriend = sessionStorage.getItem('hdti_match_pending_friend');
+                  if (pendingFriend) {
+                    return (
+                      <button
+                        onClick={() => {
+                          sessionStorage.removeItem('hdti_match_pending_friend');
+                          navigate(`/match?r=${pendingFriend}`);
+                        }}
+                        className="w-full py-4 rounded-[18px] text-white font-bold text-base cursor-pointer transition-opacity hover:opacity-90 shadow-[0_6px_16px_rgba(196,102,63,.25)]"
+                        style={{ background: 'linear-gradient(135deg, #c4663f 0%, #a8502e 100%)' }}
+                      >
+                        🐾 测完了！回去和好友匹配
+                      </button>
+                    );
+                  }
+                  return null;
+                })()}
+
                 <button
                   onClick={handleShare}
                   disabled={posterLoading}
@@ -629,6 +649,20 @@ export default function Result() {
                   style={{ background: theme.posterBg }}
                 >
                   {posterLoading ? '⏳ 海报生成中...' : `🎴 ${theme.posterText}`}
+                </button>
+
+                {/* 复制匹配链接 */}
+                <button
+                  onClick={() => {
+                    const matchLink = `${window.location.origin}/match?r=${animal.id}`;
+                    navigator.clipboard.writeText(matchLink).then(() => {
+                      setCopyToast(true);
+                      setTimeout(() => setCopyToast(false), 2000);
+                    });
+                  }}
+                  className="w-full py-3 text-sm text-text-muted hover:text-primary transition-colors cursor-pointer text-center"
+                >
+                  📋 复制匹配链接，发给好友
                 </button>
 
                 <div className="flex gap-3">

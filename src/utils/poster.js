@@ -40,6 +40,8 @@ function roundRect(ctx, x, y, w, h, r) {
  * 生成分享海报
  */
 export async function generatePoster({ animal, matchRate, homeUrl, stats }) {
+  // 海报二维码指向匹配页，朋友扫码后直接进入匹配流程
+  const matchUrl = `${homeUrl.replace(/\/$/, '')}/match?r=${animal.id}`;
   const bgColors = (animal.isEgg && POSTER_COLORS[animal.id]) || DEFAULT_BG;
 
   const canvas = document.createElement('canvas');
@@ -249,7 +251,7 @@ export async function generatePoster({ animal, matchRate, homeUrl, stats }) {
   const remainingSpace = H - divLineY;
   y = divLineY + (remainingSpace - qrBlockH) / 2;
 
-  const qrDataUrl = await QRCode.toDataURL(homeUrl, {
+  const qrDataUrl = await QRCode.toDataURL(matchUrl, {
     width: qrSize * 2,
     margin: 1,
     color: { dark: '#283d30', light: '#ffffff' },
@@ -269,11 +271,11 @@ export async function generatePoster({ animal, matchRate, homeUrl, stats }) {
 
   ctx.fillStyle = '#ffffff';
   ctx.font = 'bold 40px "Noto Sans SC", sans-serif';
-  ctx.fillText('扫码测你的横断山兽', textX, textCenterY - 38);
+  ctx.fillText('扫码来和我匹配', textX, textCenterY - 38);
 
   ctx.fillStyle = '#b9c39c';
   ctx.font = '400 34px "Noto Sans SC", sans-serif';
-  ctx.fillText('13 种濒危动物人格 · 中英双语', textX, textCenterY + 14);
+  ctx.fillText('测出你的横断山兽 · 看我们什么关系', textX, textCenterY + 14);
 
   // 第三行：与XX匹配度 82% · 仅 12.4% 测出
   ctx.font = '400 34px "Noto Sans SC", sans-serif';

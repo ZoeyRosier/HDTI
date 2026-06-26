@@ -42,6 +42,9 @@ export default function Match() {
     }
   }, []);
 
+  // 判断用户是否已有自己的测试结果
+  const hasOwnResult = Boolean(mineInput);
+
   const friendAnimal = useMemo(
     () => (friendId ? pickAnimal(animalsMap[friendId]) : null),
     [friendId, language, pickAnimal],
@@ -77,6 +80,15 @@ export default function Match() {
 
     saveMatchSession({ mineId: mineParsed.animalId, friendId });
     navigate('/match/loading');
+  }
+
+  function handleGoTest() {
+    // 记住朋友的动物ID，测完后回来自动识别
+    if (friendId) {
+      sessionStorage.setItem('hdti_match_pending_friend', friendId);
+    }
+    sessionStorage.removeItem('hdti_answers');
+    navigate('/quiz');
   }
 
   return (
@@ -176,36 +188,68 @@ export default function Match() {
           )}
         </div>
 
-        {/* Mine input */}
-        <div className="bg-white rounded-[24px] p-6 shadow-[0_8px_32px_rgba(78,107,83,0.08)] border border-[#e8ede4] space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-[#23271d] mb-1.5">
-              {t('match.mineInputLabel')}
-            </label>
-            <input
-              type="text"
-              value={mineInput}
-              onChange={(e) => { setMineInput(e.target.value); setMineError(''); }}
-              placeholder={t('match.minePlaceholder')}
-              className={`w-full px-4 py-3 rounded-2xl border bg-[#F6F8F4] text-sm outline-none transition-colors ${
-                mineError ? 'border-[#F38B72]' : 'border-[#e4e9dd] focus:border-[#4E6B53]'
-              }`}
-            />
-            {mineError ? (
-              <p className="text-xs text-[#F38B72] mt-1.5">{mineError}</p>
-            ) : (
-              <p className="text-xs text-[#8a9379] mt-1.5">{t('match.inputHint')}</p>
-            )}
-          </div>
+        {/* Mine input — 区分有结果 / 无结果两种状态 */}
+        {hasOwnResult ? (
+          <div className="bg-white rounded-[24px] p-6 shadow-[0_8px_32px_rgba(78,107,83,0.08)] border border-[#e8ede4] space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-[#23271d] mb-1.5">
+                {t('match.mineInputLabel')}
+              </label>
+              <input
+                type="text"
+                value={mineInput}
+                onChange={(e) => { setMineInput(e.target.value); setMineError(''); }}
+                placeholder={t('match.minePlaceholder')}
+                className={`w-full px-4 py-3 rounded-2xl border bg-[#F6F8F4] text-sm outline-none transition-colors ${
+                  mineError ? 'border-[#F38B72]' : 'border-[#e4e9dd] focus:border-[#4E6B53]'
+                }`}
+              />
+              {mineError ? (
+                <p className="text-xs text-[#F38B72] mt-1.5">{mineError}</p>
+              ) : (
+                <p className="text-xs text-[#8a9379] mt-1.5">{t('match.inputHint')}</p>
+              )}
+            </div>
 
-          <button
-            onClick={handleStart}
-            className="w-full py-3.5 rounded-2xl text-white font-medium transition-opacity hover:opacity-90 cursor-pointer"
-            style={{ backgroundColor: ACCENT }}
+            <button
+              onClick={handleStart}
+              className="w-full py-3.5 rounded-2xl text-white font-medium transition-opacity hover:opacity-90 cursor-pointer"
+              style={{ backgroundColor: ACCENT }}
+            >
+              {t('match.startAnalysis')}
+            </button>
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="rounded-[24px] p-6 shadow-[0_8px_32px_rgba(78,107,83,0.08)] border-2 border-dashed border-[#b8c9a8] text-center space-y-4"
+            style={{ background: 'linear-gradient(160deg, #f4f9f0 0%, #eaf3e3 100%)' }}
           >
-            {t('match.startAnalysis')}
-          </button>
-        </div>
+            <div className="w-16 h-16 mx-auto rounded-full bg-white flex items-center justify-center text-3xl shadow-sm">
+              🐾
+            </div>
+            <div>
+              <p className="text-lg font-bold text-[#2e4738]">
+                {t('match.noResultTitle')}
+              </p>
+              <p className="text-sm text-[#5f6a52] mt-1.5 leading-relaxed">
+                {t('match.noResultDesc')}
+              </p>
+            </div>
+            <button
+              onClick={handleGoTest}
+              className="w-full py-4 rounded-2xl text-white font-bold text-base transition-opacity hover:opacity-90 cursor-pointer shadow-[0_6px_16px_rgba(61,90,71,.25)]"
+              style={{ background: `linear-gradient(135deg, ${PRIMARY} 0%, #3d6b4a 100%)` }}
+            >
+              {t('match.goTestBtn')}
+            </button>
+            <p className="text-xs text-[#8a9379]">
+              {t('match.goTestHint')}
+            </p>
+          </motion.div>
+        )}
       </div>
     </div>
   );

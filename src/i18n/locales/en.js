@@ -215,5 +215,9 @@ export default {
     errorSame: 'Cannot match with yourself',
     errorNoFriend: "Please identify your friend's archetype first",
     retake: '🔄 Not tested yet? Take the quiz',
+    noResultTitle: "You haven't taken the test yet",
+    noResultDesc: 'Take the quiz first to discover your Hengduan animal, then come back to match',
+    goTestBtn: '🐾 Take the Quiz',
+    goTestHint: '16 questions · ~2 min · auto-return to match',
   },
 };
