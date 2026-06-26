@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { animalsMap, animals } from '../data/animals';
-import { calculateResult, vecToLabel, getDimensionDesc, calcMatchRate } from '../utils/scoring';
+import { calculateResult, vecToLabel, getDimensionDesc, calcMatchRate, normalizeDim } from '../utils/scoring';
 import { readResultFromUrl, shareResult } from '../utils/share';
 import { incrementAnimalCount, getAllCounts } from '../utils/supabase';
 import { generatePoster } from '../utils/poster';
@@ -543,7 +543,7 @@ export default function Result() {
                         const badgeBg = level === 'H' ? `rgba(${badgeRgb},0.22)`
                           : level === 'M' ? `rgba(${badgeRgb},0.13)`
                           : `rgba(${badgeRgb},0.06)`;
-                        const barPct = Math.max(10, Math.round(((displayVec[dim.id] - 1) / 2) * 100));
+                        const barPct = Math.max(10, Math.round(((normalizeDim(dim.id, displayVec[dim.id]) - 1) / 2) * 100));
                         const barOpacity = 0.2 + (barPct / 100) * 0.6;
                         return (
                           <div key={dim.id}>

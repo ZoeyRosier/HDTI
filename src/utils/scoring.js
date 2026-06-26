@@ -148,8 +148,32 @@ export function calculateResult(answers) {
   };
 }
 
+// 各维度的实际可达范围（基于 optionVectors 加权计算）
+const DIM_RANGES = [
+  [1.27, 2.41], // D1 探索倾向
+  [1.23, 2.64], // D2 应激反应
+  [1.00, 2.55], // D3 同伴依赖
+  [1.00, 2.18], // D4 连接主动性
+  [1.36, 2.91], // D5 活动性
+  [1.00, 2.86], // D6 资源竞争
+  [1.55, 2.73], // D7 探索开放
+];
+
+/**
+ * 将原始维度值归一化到 [1, 3]，基于该维度的实际可达范围
+ */
+export function normalizeDim(dimIndex, rawValue) {
+  const [min, max] = DIM_RANGES[dimIndex];
+  if (max - min < 0.01) return 2;
+  return 1 + ((rawValue - min) / (max - min)) * 2;
+}
+
 export function vecToLabel(vec) {
-  return vec.map(v => v <= 1.57 ? 'L' : v >= 2.13 ? 'H' : 'M');
+  // L 40% / M 20% / H 40% — 归一化后阈值：L<1.8, M∈[1.8,2.2), H≥2.2
+  return vec.map((v, i) => {
+    const nv = normalizeDim(i, v);
+    return nv < 1.8 ? 'L' : nv >= 2.2 ? 'H' : 'M';
+  });
 }
 
 export function getDimensionDesc(dimIndex, value) {
@@ -162,6 +186,7 @@ export function getDimensionDesc(dimIndex, value) {
     { L: "退一步海阔天空，没什么值得正面硬刚。", M: "多数时候和气生财，但碰到底线会突然变脸。", H: "我的东西就是我的，碰一下试试？后果自负。" },
     { L: "老办法用得好好的，为什么要换？换了万一翻车。", M: "该守规矩的时候守，该变通的时候也不死磕。", H: "此路不通？没关系，地图上还有七条备选路线。" },
   ];
-  const level = value <= 1.57 ? 'L' : value >= 2.13 ? 'H' : 'M';
+  const nv = normalizeDim(dimIndex, value);
+  const level = nv < 1.8 ? 'L' : nv >= 2.2 ? 'H' : 'M';
   return descs[dimIndex][level];
 }
