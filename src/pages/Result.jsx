@@ -159,6 +159,12 @@ export default function Result() {
 
   function handleDownloadPoster() {
     if (!posterUrl) return;
+    // 微信内置浏览器不支持 <a download>，提示用户长按保存
+    const isWechat = /MicroMessenger/i.test(navigator.userAgent);
+    if (isWechat) {
+      // 微信中无法程序化下载，引导用户长按
+      return;
+    }
     const a = document.createElement('a');
     a.href = posterUrl;
     a.download = `HDTI_${animal.code}_海报.png`;
@@ -166,6 +172,8 @@ export default function Result() {
     a.click();
     document.body.removeChild(a);
   }
+
+  const isWechat = /MicroMessenger/i.test(navigator.userAgent);
 
   return (
     <div className="min-h-dvh">
@@ -712,12 +720,14 @@ export default function Result() {
             >
               <img src={posterUrl} alt="分享海报" className="w-full rounded-[16px] shadow-2xl" />
               <div className="flex gap-3 mt-4">
+                {!isWechat && (
                 <button
                   onClick={handleDownloadPoster}
                   className="flex-1 bg-white text-text-heading py-3 rounded-[14px] text-sm font-bold cursor-pointer hover:bg-gray-50 transition-colors"
                 >
                   保存图片
                 </button>
+                )}
                 <button
                   onClick={() => setPosterUrl(null)}
                   className="flex-1 bg-white/20 text-white py-3 rounded-[14px] text-sm font-medium cursor-pointer hover:bg-white/30 transition-colors"
@@ -725,7 +735,9 @@ export default function Result() {
                   关闭
                 </button>
               </div>
-              <p className="text-center text-white/60 text-xs mt-3">长按图片也可保存到相册</p>
+              <p className="text-center text-white/60 text-xs mt-3">
+                {isWechat ? '👆 长按上方图片，选择「保存到手机」' : '长按图片也可保存到相册'}
+              </p>
             </motion.div>
           </motion.div>
         )}
