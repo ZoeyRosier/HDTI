@@ -169,10 +169,13 @@ export function normalizeDim(dimIndex, rawValue) {
 }
 
 export function vecToLabel(vec) {
-  // 三等分：L < 1.67 / M ∈ [1.67, 2.33) / H ≥ 2.33
+  // D3/D4（社交模型）用归一化三等分，其他维度用固定阈值
   return vec.map((v, i) => {
-    const nv = normalizeDim(i, v);
-    return nv < 1.67 ? 'L' : nv >= 2.33 ? 'H' : 'M';
+    if (i === 2 || i === 3) {
+      const nv = normalizeDim(i, v);
+      return nv < 1.67 ? 'L' : nv >= 2.33 ? 'H' : 'M';
+    }
+    return v <= 1.57 ? 'L' : v >= 2.13 ? 'H' : 'M';
   });
 }
 
@@ -187,6 +190,8 @@ export function getDimensionDesc(dimIndex, value) {
     { L: "老办法用得好好的，为什么要换？换了万一翻车。", M: "该守规矩的时候守，该变通的时候也不死磕。", H: "此路不通？没关系，地图上还有七条备选路线。" },
   ];
   const nv = normalizeDim(dimIndex, value);
-  const level = nv < 1.67 ? 'L' : nv >= 2.33 ? 'H' : 'M';
+  const level = (dimIndex === 2 || dimIndex === 3)
+    ? (nv < 1.67 ? 'L' : nv >= 2.33 ? 'H' : 'M')
+    : (value <= 1.57 ? 'L' : value >= 2.13 ? 'H' : 'M');
   return descs[dimIndex][level];
 }

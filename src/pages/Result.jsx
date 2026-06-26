@@ -543,7 +543,7 @@ export default function Result() {
                         const badgeBg = level === 'H' ? `rgba(${badgeRgb},0.22)`
                           : level === 'M' ? `rgba(${badgeRgb},0.13)`
                           : `rgba(${badgeRgb},0.06)`;
-                        const barPct = Math.max(10, Math.round(((normalizeDim(dim.id, displayVec[dim.id]) - 1) / 2) * 100));
+                        const barPct = Math.max(10, Math.round((((dim.id === 2 || dim.id === 3) ? normalizeDim(dim.id, displayVec[dim.id]) : displayVec[dim.id]) - 1) / 2 * 100));
                         const barOpacity = 0.2 + (barPct / 100) * 0.6;
                         return (
                           <div key={dim.id}>
