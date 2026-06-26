@@ -174,11 +174,11 @@ export default function Result() {
 
         {/* 顶部导航 */}
         <div className="absolute top-0 left-0 right-0 flex justify-between items-center px-4 py-3">
-          <div className="flex items-center gap-2 bg-white/10 rounded-full px-3.5 py-1.5 cursor-pointer hover:bg-white/20 transition-colors" onClick={() => navigate('/')}>
-            <span className="text-sm">🐾</span>
-            <span className="font-mono text-xs text-white/90 tracking-wide">HDTI</span>
+          <div className="flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1.5 cursor-pointer hover:bg-white/20 transition-colors" onClick={() => navigate('/')}>
+            <span className="text-xs">🐾</span>
+            <span className="font-mono text-[11px] text-white/90 tracking-wide">HDTI</span>
             <span className="w-px h-3 bg-white/20" />
-            <span className="text-xs text-white/60">首页</span>
+            <span className="text-[11px] text-white/60">首页</span>
           </div>
           <span className="font-mono text-[10px] text-white/50 tracking-wide">
             {isPreview ? '档案 · PROFILE' : isEggResult ? '彩蛋 · EGG' : '结果 · RESULT'}
