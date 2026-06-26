@@ -169,10 +169,10 @@ export function normalizeDim(dimIndex, rawValue) {
 }
 
 export function vecToLabel(vec) {
-  // L 40% / M 20% / H 40% — 归一化后阈值：L<1.8, M∈[1.8,2.2), H≥2.2
+  // 三等分：L < 1.67 / M ∈ [1.67, 2.33) / H ≥ 2.33
   return vec.map((v, i) => {
     const nv = normalizeDim(i, v);
-    return nv < 1.8 ? 'L' : nv >= 2.2 ? 'H' : 'M';
+    return nv < 1.67 ? 'L' : nv >= 2.33 ? 'H' : 'M';
   });
 }
 
@@ -187,6 +187,6 @@ export function getDimensionDesc(dimIndex, value) {
     { L: "老办法用得好好的，为什么要换？换了万一翻车。", M: "该守规矩的时候守，该变通的时候也不死磕。", H: "此路不通？没关系，地图上还有七条备选路线。" },
   ];
   const nv = normalizeDim(dimIndex, value);
-  const level = nv < 1.8 ? 'L' : nv >= 2.2 ? 'H' : 'M';
+  const level = nv < 1.67 ? 'L' : nv >= 2.33 ? 'H' : 'M';
   return descs[dimIndex][level];
 }
