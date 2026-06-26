@@ -13,6 +13,16 @@ export function calcMatchRate(userVec, animalVec) {
   return Math.round((1 - dist / 14) * 100);
 }
 
+/**
+ * 基于实际距离分布计算匹配度（区分度更高的版本）
+ * 分母 = 用户到最远动物的距离，兜底 60%
+ */
+export function calcMatchRateRelative(minDist, maxDist) {
+  if (maxDist < 0.01) return 95; // 极端情况：所有动物距离都为0
+  const raw = Math.round((1 - minDist / maxDist) * 100);
+  return Math.max(60, Math.min(98, raw)); // 区间 [60%, 98%]
+}
+
 function calcLegacyScores(answers) {
   const scores = {
     "滇金丝猴": 0, "豺": 0, "黑颈鹤": 0, "雪豹": 0,
@@ -124,8 +134,9 @@ export function calculateResult(answers) {
     }
   }
 
-  // 匹配度：用户归一化向量 vs 动物标准向量
-  const matchRate = calcMatchRate(userAvgVec, animalVectors[finalAnimalId]);
+  // 匹配度：用实际距离分布计算，区分度更高
+  const maxDist = Math.max(...Object.values(distances));
+  const matchRate = calcMatchRateRelative(minDist, maxDist);
 
   return {
     result: finalAnimalId,
