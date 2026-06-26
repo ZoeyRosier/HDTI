@@ -13,7 +13,7 @@ import {
   elevationOverlap,
 } from './ecologyProfiles';
 
-export const HIGH_COMPAT_THRESHOLD = 70;
+export const HIGH_COMPAT_THRESHOLD = 78;
 
 /** @typedef {'predator_prey'|'habitat_overlap'|'adjacent_resources'|'potential_competition'|'niche_differentiation'|'morph_variant'} RelationPath */
 
@@ -294,12 +294,12 @@ export function getPairEcologySummary(idA, idB, lang) {
 
 const COMPAT_SUFFIX = {
   high: {
-    zh: ' 人格向量上你们也高度同频，这让上述生态结构更容易被转化成默契，而不是硬碰硬。',
-    en: ' Your personality vectors align closely too — so this ecological structure is more likely to become sync than collision.',
+    zh: ' 人格向量上你们也高度重叠，生态结构天然能转化成默契——别人还在磨合，你们已经出发了。',
+    en: ' Your personality vectors overlap heavily — this ecological structure naturally becomes sync. Others are still calibrating; you two already left.',
   },
   low: {
-    zh: ' 人格向量差异较大，上述生态张力会被放大——需要更多耐心翻译，但未必不是有深度的组合。',
-    en: ' Your personality vectors diverge — ecological tension may feel louder. More translation patience needed; not necessarily a shallow pairing.',
+    zh: ' 人格向量差异大意味着：你们吵不起来（吵的频道都不一样），但能互相打开全新视角。',
+    en: ' Big vector gap means: you can barely argue (different frequencies), but you open entirely new angles for each other.',
   },
   mid: {
     zh: '',
@@ -355,7 +355,7 @@ export function generatePairCopy(idA, idB, lang, compatRate = 65) {
   const desc = fill(descs[h % descs.length]);
 
   const compatTier =
-    compatRate >= HIGH_COMPAT_THRESHOLD ? 'high' : compatRate >= 50 ? 'mid' : 'low';
+    compatRate >= HIGH_COMPAT_THRESHOLD ? 'high' : compatRate >= 65 ? 'mid' : 'low';
   const suffix = COMPAT_SUFFIX[compatTier][lang];
 
   const tags = [
@@ -365,10 +365,10 @@ export function generatePairCopy(idA, idB, lang, compatRate = 65) {
       ? lang === 'zh'
         ? '向量同频'
         : 'Vector sync'
-      : compatRate < 50
+      : compatRate < 65
         ? lang === 'zh'
-          ? '需要翻译'
-          : 'Needs translation'
+          ? '反差CP'
+          : 'Contrast duo'
         : lang === 'zh'
           ? '中等磨合'
           : 'Moderate tuning',

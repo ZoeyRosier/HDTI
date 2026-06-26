@@ -50,12 +50,12 @@ export function calcPairCompatibility(animalAId, animalBId) {
   const dist = vecA.reduce((s, v, i) => s + Math.abs(v - vecB[i]), 0);
 
   // 所有8只基础动物对之间的距离范围：min≈0.34, max≈2.48
-  // 线性映射到 [35%, 95%]
+  // 线性映射到 [50%, 95%]
   const PAIR_DIST_MIN = 0.34;
   const PAIR_DIST_MAX = 2.48;
   const clamped = Math.max(PAIR_DIST_MIN, Math.min(PAIR_DIST_MAX, dist));
-  const rate = Math.round(95 - ((clamped - PAIR_DIST_MIN) / (PAIR_DIST_MAX - PAIR_DIST_MIN)) * 60);
-  return Math.max(35, Math.min(95, rate));
+  const rate = Math.round(95 - ((clamped - PAIR_DIST_MIN) / (PAIR_DIST_MAX - PAIR_DIST_MIN)) * 45);
+  return Math.max(50, Math.min(95, rate));
 }
 
 /**
@@ -191,7 +191,7 @@ export function loadMatchSession() {
 
 /** @param {number} rate */
 export function getInterpretationTier(rate) {
-  if (rate >= 70) return 'high';
-  if (rate >= 50) return 'mid';
+  if (rate >= 78) return 'high';
+  if (rate >= 65) return 'mid';
   return 'low';
 }
