@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
 import Home from './pages/Home';
 import Quiz from './pages/Quiz';
 import Loading from './pages/Loading';
@@ -10,6 +10,12 @@ import Animals from './pages/Animals';
 import AnimalDetail from './pages/AnimalDetail';
 import { useI18n, LangToggle } from './i18n';
 
+/** 让 Result 在 URL 参数变化时重新挂载 */
+function ResultPage() {
+  const [params] = useSearchParams();
+  return <Result key={params.get('r') || 'self'} />;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -17,7 +23,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/loading" element={<Loading />} />
-        <Route path="/result" element={<Result />} />
+        <Route path="/result" element={<ResultPage />} />
         <Route path="/animals" element={<Animals />} />
         <Route path="/animals/:id" element={<AnimalDetail />} />
         <Route path="/about" element={<PlaceholderPage pageKey="about" />} />
