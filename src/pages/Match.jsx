@@ -21,6 +21,7 @@ export default function Match() {
   const [friendLinkError, setFriendLinkError] = useState('');
   const [mineInput, setMineInput] = useState('');
   const [mineError, setMineError] = useState('');
+  const [mineCopied, setMineCopied] = useState(false);
 
   useEffect(() => {
     const r = searchParams.get('r');
@@ -196,15 +197,30 @@ export default function Match() {
               <label className="block text-sm font-medium text-[#23271d] mb-1.5">
                 {t('match.mineInputLabel')}
               </label>
-              <input
-                type="text"
-                value={mineInput}
-                onChange={(e) => { setMineInput(e.target.value); setMineError(''); }}
-                placeholder={t('match.minePlaceholder')}
-                className={`w-full px-4 py-3 rounded-2xl border bg-[#F6F8F4] text-sm outline-none transition-colors ${
-                  mineError ? 'border-[#F38B72]' : 'border-[#e4e9dd] focus:border-[#4E6B53]'
-                }`}
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={mineInput}
+                  onChange={(e) => { setMineInput(e.target.value); setMineError(''); setMineCopied(false); }}
+                  placeholder={t('match.minePlaceholder')}
+                  className={`w-full px-4 py-3 pr-16 rounded-2xl border bg-[#F6F8F4] text-sm outline-none transition-colors ${
+                    mineError ? 'border-[#F38B72]' : 'border-[#e4e9dd] focus:border-[#4E6B53]'
+                  }`}
+                />
+                {mineInput && (
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(mineInput).then(() => {
+                        setMineCopied(true);
+                        setTimeout(() => setMineCopied(false), 2000);
+                      });
+                    }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-[#4E6B53] font-medium px-2.5 py-1.5 rounded-xl bg-[#e8ede4] hover:bg-[#dce6d4] transition-colors cursor-pointer"
+                  >
+                    {mineCopied ? '已复制 ✓' : '复制'}
+                  </button>
+                )}
+              </div>
               {mineError ? (
                 <p className="text-xs text-[#F38B72] mt-1.5">{mineError}</p>
               ) : (
