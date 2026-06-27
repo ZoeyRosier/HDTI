@@ -165,6 +165,8 @@ export default {
     archetype: 'Personality Reading',
     backGallery: '← Back to Gallery',
     match: '✦ Friend Match',
+    dimTitle: '7-Dimension Profile',
+    dimSub: 'STANDARD DIMENSION PROFILE',
   },
 
   match: {

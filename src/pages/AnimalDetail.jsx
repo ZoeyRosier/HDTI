@@ -6,6 +6,16 @@ import { animalIconSrc } from '../utils/animalIcon';
 import { animalGradients, getIucnStyle } from '../utils/galleryMeta';
 import { useI18n, LangToggle } from '../i18n';
 
+const DETAIL_DIMS = [
+  { id: 0, code: 'D1', name: '探索倾向' },
+  { id: 1, code: 'D2', name: '应激反应' },
+  { id: 2, code: 'D3', name: '同伴依赖' },
+  { id: 3, code: 'D4', name: '连接主动性' },
+  { id: 4, code: 'D5', name: '活动性' },
+  { id: 5, code: 'D6', name: '资源竞争' },
+  { id: 6, code: 'D7', name: '探索开放' },
+];
+
 export default function AnimalDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -152,6 +162,47 @@ export default function AnimalDetail() {
             >
               {t('result.iucnLink')}
             </a>
+          )}
+
+          {/* 7维度标准画像 */}
+          {raw.vector && (
+            <div className="bg-bg-card rounded-2xl p-5 border border-border">
+              <h3 className="text-sm font-bold text-text-heading mb-1">
+                {t('detail.dimTitle')}
+              </h3>
+              <p className="text-[11px] text-text-muted font-mono tracking-wide mb-4">
+                {t('detail.dimSub')}
+              </p>
+              <div className="space-y-3">
+                {DETAIL_DIMS.map((dim) => {
+                  const val = raw.vector[dim.id];
+                  const lbl = val <= 1 ? 'L' : val >= 3 ? 'H' : 'M';
+                  const pct = Math.round(((val - 1) / 2) * 100);
+                  return (
+                    <div key={dim.id}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-medium text-text-heading">{dim.code} {dim.name}</span>
+                        <span
+                          className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                          style={{
+                            background: lbl === 'H' ? 'rgba(61,90,71,0.15)' : lbl === 'L' ? 'rgba(61,90,71,0.05)' : 'rgba(61,90,71,0.08)',
+                            color: '#3D5A47',
+                          }}
+                        >
+                          {lbl}
+                        </span>
+                      </div>
+                      <div className="h-1.5 bg-[#e8ede4] rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-primary/60"
+                          style={{ width: `${Math.max(10, pct)}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           )}
 
           <div className="flex gap-3 pt-2">
