@@ -604,7 +604,7 @@ export default function Result() {
                       key={a.id}
                       className="flex flex-col items-center text-center p-3 rounded-[14px] border transition-colors cursor-pointer"
                       style={{ borderColor: isEggResult ? theme.dividerColor : undefined, background: isEggResult ? '#ffffff' : undefined }}
-                      onClick={() => navigate(`/animals/${a.id}`)}
+                      onClick={() => navigate(`/result?r=${a.id}&preview=1`)}
                     >
                       <div className="text-[11px] mb-1" style={{ color: isEggResult ? theme.headingColor : '#8a9379' }}>{a.name}</div>
                       <img
