@@ -527,7 +527,7 @@ export default function Result() {
               </p>
 
               {(() => {
-                const displayVec = isPreview ? animal.vector : (userVec || animal.vector);
+                const displayVec = isPreview ? (animal.prdVector || animal.vector) : (userVec || animal.vector);
                 const labels = vecToLabel(displayVec);
                 const categories = [...new Set(DIMENSIONS.map(d => d.category))];
                 return categories.map(cat => (

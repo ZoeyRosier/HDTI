@@ -166,7 +166,7 @@ export default {
     backGallery: '← Back to Gallery',
     match: '✦ Friend Match',
     dimTitle: '7-Dimension Profile',
-    dimSub: 'STANDARD DIMENSION PROFILE',
+    dimSub: 'DIMENSION PROFILE · Standard archetype vector',
   },
 
   match: {

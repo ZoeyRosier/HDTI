@@ -165,8 +165,8 @@ export default {
     archetype: '横断山兽人格解读',
     backGallery: '← 返回图鉴',
     match: '✦ 好友匹配',
-    dimTitle: '7维度标准画像',
-    dimSub: 'STANDARD DIMENSION PROFILE',
+    dimTitle: '7维度画像',
+    dimSub: 'DIMENSION PROFILE · 该动物的标准维度画像',
   },
 
   match: {
