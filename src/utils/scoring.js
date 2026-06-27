@@ -87,9 +87,9 @@ export function calculateResult(answers) {
     return { result: "monkey_extreme", isEgg: true, eggType: "extreme", userVec: userAvgVec, matchRate: 95 };
   }
 
-  // 优先级3：双高组合（≥7分）
-  const cloudTrigger    = legacyScores["雪豹"] >= 7 && legacyScores["林麝"] >= 7;
-  const pheasantTrigger = legacyScores["黑颈鹤"] >= 7 && legacyScores["羚牛"] >= 7;
+  // 优先级3：双高组合（≥6分）
+  const cloudTrigger    = legacyScores["雪豹"] >= 6 && legacyScores["林麝"] >= 6;
+  const pheasantTrigger = legacyScores["黑颈鹤"] >= 6 && legacyScores["羚牛"] >= 6;
 
   if (cloudTrigger && pheasantTrigger) {
     const cloudSum    = legacyScores["雪豹"] + legacyScores["林麝"];
