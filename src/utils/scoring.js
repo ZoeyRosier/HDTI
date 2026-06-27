@@ -59,21 +59,23 @@ export function calculateResult(answers) {
 
   // ── 彩蛋检测（优先级严格从高到低）──
 
-  // 优先级1：大熊猫SOFT
-  if (answers.Q3 === "A" && answers.Q9 === "A" && answers.Q14 === "A") {
-    return {
-      result: "giant_panda",
-      isEgg: true,
-      eggType: "hidden",
-      userVec: userAvgVec,
-      matchRate: 88,
-    };
-  }
-
-  // 优先级2-3用legacy分数判断
+  // 优先级1-2共用legacy分数
   const legacyScores = calcLegacyScores(answers);
   const snowScore   = legacyScores["雪豹"];
   const monkeyScore = legacyScores["滇金丝猴"];
+
+  // 优先级1：大熊猫SOFT（但如果同时满足极致形态，极致优先）
+  if (answers.Q3 === "A" && answers.Q9 === "A" && answers.Q14 === "A") {
+    if (snowScore < 9 && monkeyScore < 9) {
+      return {
+        result: "giant_panda",
+        isEgg: true,
+        eggType: "hidden",
+        userVec: userAvgVec,
+        matchRate: 88,
+      };
+    }
+  }
 
   // 优先级2：极致形态（≥9分）
   if (snowScore >= 9 && monkeyScore >= 9) {
