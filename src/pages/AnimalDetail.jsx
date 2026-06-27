@@ -7,13 +7,23 @@ import { animalGradients, getIucnStyle } from '../utils/galleryMeta';
 import { useI18n, LangToggle } from '../i18n';
 
 const DETAIL_DIMS = [
-  { id: 0, code: 'D1', name: '探索倾向' },
-  { id: 1, code: 'D2', name: '应激反应' },
-  { id: 2, code: 'D3', name: '同伴依赖' },
-  { id: 3, code: 'D4', name: '连接主动性' },
-  { id: 4, code: 'D5', name: '活动性' },
-  { id: 5, code: 'D6', name: '资源竞争' },
-  { id: 6, code: 'D7', name: '探索开放' },
+  { id: 0, code: 'D1', name: '探索倾向', category: '行为模型' },
+  { id: 1, code: 'D2', name: '应激反应', category: '行为模型' },
+  { id: 2, code: 'D3', name: '群体依赖', category: '社交模型' },
+  { id: 3, code: 'D4', name: '社交主动性', category: '社交模型' },
+  { id: 4, code: 'D5', name: '行动频率', category: '驱动模型' },
+  { id: 5, code: 'D6', name: '领地意识', category: '驱动模型' },
+  { id: 6, code: 'D7', name: '适应灵活度', category: '策略模型' },
+];
+
+const DIM_DESCS = [
+  { L: "守熟悉领地，不涉足未知", M: "会探索，但先确认退路", H: "主动进入未知区域" },
+  { L: "遇威胁优先撤退", M: "看情况决定打还是撤", H: "正面应对反击" },
+  { L: "独立行动，不依赖群体", M: "能独处也能合群", H: "高度依赖群体" },
+  { L: "被动划界，不主动社交", M: "不主动不拒绝", H: "主动发出信号维持连接" },
+  { L: "节能优先，以静制动", M: "能动能静", H: "高频行动，持续推进" },
+  { L: "让步转移，不正面争夺", M: "多数和气，底线变脸", H: "坚守边界，强硬维护" },
+  { L: "依赖已知模式", M: "该守守，该变变", H: "主动寻找新路径" },
 ];
 
 export default function AnimalDetail() {
@@ -165,7 +175,7 @@ export default function AnimalDetail() {
           )}
 
           {/* 7维度标准画像 */}
-          {raw.vector && (
+          {raw.prdVector && (
             <div className="bg-bg-card rounded-2xl p-5 border border-border">
               <h3 className="text-sm font-bold text-text-heading mb-1">
                 {t('detail.dimTitle')}
@@ -173,35 +183,48 @@ export default function AnimalDetail() {
               <p className="text-[11px] text-text-muted font-mono tracking-wide mb-4">
                 {t('detail.dimSub')}
               </p>
-              <div className="space-y-3">
-                {DETAIL_DIMS.map((dim) => {
-                  const val = raw.vector[dim.id];
-                  const lbl = val <= 1 ? 'L' : val >= 3 ? 'H' : 'M';
-                  const pct = Math.round(((val - 1) / 2) * 100);
-                  return (
-                    <div key={dim.id}>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-medium text-text-heading">{dim.code} {dim.name}</span>
-                        <span
-                          className="text-[10px] font-bold px-1.5 py-0.5 rounded"
-                          style={{
-                            background: lbl === 'H' ? 'rgba(61,90,71,0.15)' : lbl === 'L' ? 'rgba(61,90,71,0.05)' : 'rgba(61,90,71,0.08)',
-                            color: '#3D5A47',
-                          }}
-                        >
-                          {lbl}
-                        </span>
-                      </div>
-                      <div className="h-1.5 bg-[#e8ede4] rounded-full overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-primary/60"
-                          style={{ width: `${Math.max(10, pct)}%` }}
-                        />
-                      </div>
+              {(() => {
+                const categories = [...new Set(DETAIL_DIMS.map(d => d.category))];
+                return categories.map(cat => (
+                  <div key={cat} className="mb-4 last:mb-0">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-xs font-bold text-primary">{cat}</span>
+                      <div className="flex-1 h-px bg-border" />
                     </div>
-                  );
-                })}
-              </div>
+                    <div className="space-y-3">
+                      {DETAIL_DIMS.filter(d => d.category === cat).map(dim => {
+                        const val = raw.prdVector[dim.id];
+                        const lbl = val <= 1 ? 'L' : val >= 3 ? 'H' : 'M';
+                        const pct = Math.round(((val - 1) / 2) * 100);
+                        const desc = DIM_DESCS[dim.id][lbl];
+                        return (
+                          <div key={dim.id}>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs font-bold text-text-heading">{dim.code} {dim.name}</span>
+                              <span
+                                className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                                style={{
+                                  background: lbl === 'H' ? 'rgba(61,90,71,0.18)' : lbl === 'L' ? 'rgba(61,90,71,0.06)' : 'rgba(61,90,71,0.10)',
+                                  color: '#3D5A47',
+                                }}
+                              >
+                                {lbl}
+                              </span>
+                            </div>
+                            <div className="h-1.5 bg-[#e8ede4] rounded-full overflow-hidden mb-1.5">
+                              <div
+                                className="h-full rounded-full"
+                                style={{ width: `${Math.max(10, pct)}%`, background: 'rgba(61,90,71,0.45)' }}
+                              />
+                            </div>
+                            <p className="text-[11.5px] text-text-muted leading-relaxed">{desc}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ));
+              })()}
             </div>
           )}
 
