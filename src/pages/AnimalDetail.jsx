@@ -122,8 +122,8 @@ export default function AnimalDetail() {
           </div>
 
           {animal.wildPopulation && !animal.wildPopulation.startsWith('【') && animal.wildPopulation !== 'TBD' && (
-            <div className="bg-bg-card rounded-2xl p-5 border border-border text-center">
-              <p className="text-text-secondary text-sm">
+            <div className="rounded-2xl p-5 border border-[#f0c8b8] text-center" style={{ background: 'linear-gradient(135deg, #fdf2ed 0%, #fce8e0 100%)' }}>
+              <p className="text-[#9a3c20] text-sm font-medium">
                 {t('result.statsWild', { population: animal.wildPopulation })}
               </p>
             </div>
