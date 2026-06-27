@@ -8,7 +8,8 @@ export default function Loading() {
   const { t } = useI18n();
 
   useEffect(() => {
-    const answers = sessionStorage.getItem('hdti_answers');
+    const answers = sessionStorage.getItem('hdti_answers')
+      || localStorage.getItem('hdti_answers_backup');
     const timer = setTimeout(() => {
       navigate(answers ? '/result' : '/');
     }, 1500);

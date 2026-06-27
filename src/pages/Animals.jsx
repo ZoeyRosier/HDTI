@@ -143,6 +143,7 @@ export default function Animals() {
             type="button"
             onClick={() => {
               sessionStorage.removeItem('hdti_answers');
+              localStorage.removeItem('hdti_answers_backup');
               navigate('/quiz');
             }}
             className="flex-[1.4] border-none cursor-pointer bg-primary text-white rounded-button py-3 px-2 font-extrabold text-sm shadow-[0_8px_18px_rgba(61,90,71,.28)] hover:bg-primary-dark transition-colors whitespace-nowrap"

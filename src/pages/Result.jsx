@@ -53,7 +53,8 @@ export default function Result() {
       }
     }
 
-    const answersStr = sessionStorage.getItem('hdti_answers');
+    const answersStr = sessionStorage.getItem('hdti_answers')
+      || localStorage.getItem('hdti_answers_backup');
     if (answersStr) {
       try {
         const answers = JSON.parse(answersStr);
@@ -624,7 +625,7 @@ export default function Result() {
           <div className="mt-8 max-w-md mx-auto space-y-3">
             {isPreview ? (
               <button
-                onClick={() => { sessionStorage.removeItem('hdti_answers'); navigate('/quiz'); }}
+                onClick={() => { sessionStorage.removeItem('hdti_answers'); localStorage.removeItem('hdti_answers_backup'); navigate('/quiz'); }}
                 className="w-full py-4 rounded-[18px] text-white font-bold text-base cursor-pointer transition-opacity hover:opacity-90"
                 style={{ background: theme.posterBg }}
               >
@@ -677,7 +678,7 @@ export default function Result() {
 
                 <div className="flex gap-3">
                   <button
-                    onClick={() => { sessionStorage.removeItem('hdti_answers'); navigate('/quiz'); }}
+                    onClick={() => { sessionStorage.removeItem('hdti_answers'); localStorage.removeItem('hdti_answers_backup'); navigate('/quiz'); }}
                     className="flex-1 bg-white border border-border text-text-secondary py-3.5 rounded-[18px] text-sm font-medium hover:border-primary-light transition-colors cursor-pointer"
                   >
                     ↻ 再测一次

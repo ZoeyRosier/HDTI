@@ -6,7 +6,9 @@ import { useI18n, LangToggle } from '../i18n';
 
 function loadAnswers() {
   try {
-    const saved = sessionStorage.getItem('hdti_answers');
+    // 优先 sessionStorage，兜底 localStorage（微信 WebView 兼容）
+    const saved = sessionStorage.getItem('hdti_answers')
+      || localStorage.getItem('hdti_answers_backup');
     return saved ? JSON.parse(saved) : {};
   } catch {
     return {};
@@ -14,7 +16,10 @@ function loadAnswers() {
 }
 
 function saveAnswers(answers) {
-  sessionStorage.setItem('hdti_answers', JSON.stringify(answers));
+  const json = JSON.stringify(answers);
+  sessionStorage.setItem('hdti_answers', json);
+  // 同步写入 localStorage 作为兜底（微信 webview 可能丢失 sessionStorage）
+  localStorage.setItem('hdti_answers_backup', json);
 }
 
 export default function Quiz() {

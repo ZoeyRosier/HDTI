@@ -57,6 +57,7 @@ export default function Home() {
 
   function handleStart() {
     sessionStorage.removeItem('hdti_answers');
+    localStorage.removeItem('hdti_answers_backup');
     navigate('/quiz');
   }
 

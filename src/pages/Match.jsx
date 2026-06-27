@@ -88,6 +88,7 @@ export default function Match() {
       sessionStorage.setItem('hdti_match_pending_friend', friendId);
     }
     sessionStorage.removeItem('hdti_answers');
+    localStorage.removeItem('hdti_answers_backup');
     navigate('/quiz');
   }
 
