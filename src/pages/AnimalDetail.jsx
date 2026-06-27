@@ -175,7 +175,7 @@ export default function AnimalDetail() {
           )}
 
           {/* 7维度标准画像 */}
-          {raw.prdVector && (
+          {(raw.prdVector || (raw.reuseScienceFrom && animalsMap[raw.reuseScienceFrom]?.prdVector)) && (
             <div className="bg-bg-card rounded-2xl p-5 border border-border">
               <h3 className="text-sm font-bold text-text-heading mb-1">
                 {t('detail.dimTitle')}
@@ -184,6 +184,7 @@ export default function AnimalDetail() {
                 {t('detail.dimSub')}
               </p>
               {(() => {
+                const dimVec = raw.prdVector || animalsMap[raw.reuseScienceFrom]?.prdVector;
                 const categories = [...new Set(DETAIL_DIMS.map(d => d.category))];
                 return categories.map(cat => (
                   <div key={cat} className="mb-4 last:mb-0">
@@ -193,7 +194,7 @@ export default function AnimalDetail() {
                     </div>
                     <div className="space-y-3">
                       {DETAIL_DIMS.filter(d => d.category === cat).map(dim => {
-                        const val = raw.prdVector[dim.id];
+                        const val = dimVec[dim.id];
                         const lbl = val <= 1 ? 'L' : val >= 3 ? 'H' : 'M';
                         const pct = Math.round(((val - 1) / 2) * 100);
                         const desc = DIM_DESCS[dim.id][lbl];
