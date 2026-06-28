@@ -25,6 +25,7 @@ function saveAnswers(answers) {
 export default function Quiz() {
   const navigate = useNavigate();
   const { t, language, pickQuestion } = useI18n();
+  const [showIntro, setShowIntro] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState(loadAnswers);
   const advanceTimerRef = useRef(null);
@@ -93,6 +94,33 @@ export default function Quiz() {
   };
 
   return (
+    <>
+    {/* 答题引导页 */}
+    {showIntro && (
+      <div className="min-h-dvh flex flex-col items-center justify-center bg-primary-dark text-white px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="max-w-sm text-center"
+        >
+          <span className="text-4xl mb-6 block">🌲</span>
+          <h2 className="text-xl font-bold mb-5">{t('quiz.introTitle')}</h2>
+          <p className="text-[15px] text-white/80 leading-[2] whitespace-pre-line mb-8">
+            {t('quiz.introBody')}
+          </p>
+          <button
+            onClick={() => setShowIntro(false)}
+            className="w-full py-4 rounded-[18px] bg-white text-primary-dark font-bold text-base cursor-pointer hover:bg-white/90 transition-colors"
+          >
+            {t('quiz.introStart')}
+          </button>
+        </motion.div>
+      </div>
+    )}
+
+    {/* 答题主体 */}
+    {!showIntro && (
     <div className="min-h-dvh flex flex-col bg-bg-page">
       <div className="sticky top-0 z-10 bg-bg-page/95 backdrop-blur-sm px-4 py-3 flex items-center gap-3">
         <button
@@ -214,5 +242,7 @@ export default function Quiz() {
         </div>
       </div>
     </div>
+    )}
+    </>
   );
 }

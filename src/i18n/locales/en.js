@@ -100,6 +100,9 @@ export default {
   },
 
   quiz: {
+    introTitle: 'Enter the Hengduan',
+    introBody: "From now on, you're not a human behind a screen.\nYou're a wild animal in the Hengduan Mountains —\ndawn breaks, mist still clings to the valley,\nand you need to make choices.\n\nJust follow your instincts.",
+    introStart: "I'm ready",
     questionLabel: 'QUESTION',
     hint: 'Tap an option to continue ↓',
     prev: '← Previous',

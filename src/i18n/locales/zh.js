@@ -100,6 +100,9 @@ export default {
   },
 
   quiz: {
+    introTitle: '进入横断山',
+    introBody: '从现在起，你不是坐在屏幕前的人类。\n你是一只横断山脉里的野生动物——\n清晨醒来，山雾还没散，你需要做出选择。\n\n跟着直觉走就好。',
+    introStart: '准备好了',
     questionLabel: '题目',
     hint: '轻点选项，下一题自动出现 ↓',
     prev: '← 上一题',
