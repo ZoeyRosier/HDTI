@@ -225,18 +225,20 @@ export default function Result() {
             <span className="w-px h-3 bg-white/20" />
             <span className="text-[11px] text-white/60">首页</span>
           </div>
-          <span className="font-mono text-[10px] text-white/50 tracking-wide">
-            {isPreview ? '档案 · PROFILE' : isEggResult ? '彩蛋 · EGG' : '结果 · RESULT'}
-          </span>
-          {!isPreview && (
-            <button
-              onClick={toggleBgm}
-              className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-sm cursor-pointer hover:bg-white/20 transition-colors"
-              aria-label={bgmPlaying ? '静音' : '播放音乐'}
-            >
-              {bgmPlaying ? '🔊' : '🔇'}
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-[10px] text-white/50 tracking-wide">
+              {isPreview ? '档案 · PROFILE' : isEggResult ? '彩蛋 · EGG' : '结果 · RESULT'}
+            </span>
+            {!isPreview && (
+              <button
+                onClick={toggleBgm}
+                className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-sm cursor-pointer hover:bg-white/20 transition-colors"
+                aria-label={bgmPlaying ? '静音' : '播放音乐'}
+              >
+                {bgmPlaying ? '🔊' : '🔇'}
+              </button>
+            )}
+          </div>
         </div>
 
         <motion.div
