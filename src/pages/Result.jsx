@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { animalsMap, animals } from '../data/animals';
@@ -176,6 +176,42 @@ export default function Result() {
 
   const isWechat = /MicroMessenger/i.test(navigator.userAgent);
 
+  // BGM 播放逻辑
+  const audioRef = useRef(null);
+  const [bgmPlaying, setBgmPlaying] = useState(false);
+
+  useEffect(() => {
+    if (!resultData || resultData.isPreview) return;
+    const audio = new Audio('/audio/result-bgm.mp3');
+    audio.loop = true;
+    audio.volume = 0.4;
+    audioRef.current = audio;
+
+    // 尝试自动播放（用户之前已有手势操作）
+    audio.play().then(() => {
+      setBgmPlaying(true);
+    }).catch(() => {
+      // 浏览器阻止了自动播放，等待用户手动点击
+      setBgmPlaying(false);
+    });
+
+    return () => {
+      audio.pause();
+      audio.src = '';
+    };
+  }, [resultData]);
+
+  function toggleBgm() {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (bgmPlaying) {
+      audio.pause();
+      setBgmPlaying(false);
+    } else {
+      audio.play().then(() => setBgmPlaying(true)).catch(() => {});
+    }
+  }
+
   return (
     <div className="min-h-dvh">
       {/* ========== 第一屏：英雄区 ========== */}
@@ -192,6 +228,15 @@ export default function Result() {
           <span className="font-mono text-[10px] text-white/50 tracking-wide">
             {isPreview ? '档案 · PROFILE' : isEggResult ? '彩蛋 · EGG' : '结果 · RESULT'}
           </span>
+          {!isPreview && (
+            <button
+              onClick={toggleBgm}
+              className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-sm cursor-pointer hover:bg-white/20 transition-colors"
+              aria-label={bgmPlaying ? '静音' : '播放音乐'}
+            >
+              {bgmPlaying ? '🔊' : '🔇'}
+            </button>
+          )}
         </div>
 
         <motion.div
