@@ -234,6 +234,7 @@ export default function Result() {
                 onClick={toggleBgm}
                 className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-sm cursor-pointer hover:bg-white/20 transition-colors"
                 aria-label={bgmPlaying ? '静音' : '播放音乐'}
+                title="山雀 — 万能青年旅店"
               >
                 {bgmPlaying ? '🔊' : '🔇'}
               </button>
