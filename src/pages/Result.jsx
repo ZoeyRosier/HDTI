@@ -745,7 +745,8 @@ export default function Result() {
           {/* 页脚 */}
           <div className="text-center mt-8 text-[11px] text-text-tertiary leading-[1.7]">
             HDTI · 横断山脉动物人格测试<br />
-            <span className="text-text-muted">🌿 了解，是保护的第一步</span>
+            <span className="text-text-muted">🌿 了解，是保护的第一步</span><br />
+            <span className="text-text-muted">🎵 BGM：山雀 — 万能青年旅店</span>
           </div>
         </div>
       </div>
