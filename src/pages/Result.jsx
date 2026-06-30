@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { animalsMap, animals } from '../data/animals';
-import { calculateResult, vecToLabel, getDimensionDesc, calcMatchRate, normalizeDim } from '../utils/scoring';
+import { calculateResult, vecToLabel, getDimensionDesc, calcMatchRate, calcMatchRateRelative, normalizeDim } from '../utils/scoring';
 import { readResultFromUrl, shareResult } from '../utils/share';
 import { incrementAnimalCount, getAllCounts } from '../utils/supabase';
 import { generatePoster } from '../utils/poster';
@@ -46,6 +46,23 @@ export default function Result() {
 
   const [resultData] = useState(() => {
     const urlResult = readResultFromUrl();
+
+    // 优先从 sessionStorage 计算（用户本人刚答完题）
+    const answersStr = sessionStorage.getItem('hdti_answers')
+      || localStorage.getItem('hdti_answers_backup');
+    if (answersStr && (!urlResult || !urlResult.isPreview)) {
+      try {
+        const answers = JSON.parse(answersStr);
+        if (Object.keys(answers).length === 16) {
+          const { result, isEgg, eggType, matchRate, userVec } = calculateResult(answers);
+          const animal = animalsMap[result];
+          if (animal) return { animal, matchRate, isSharedView: false, isEgg, eggType, userVec };
+        }
+      } catch (e) {
+        // fall through
+      }
+    }
+
     if (urlResult) {
       const animal = animalsMap[urlResult.animalId];
       if (animal) {
@@ -53,24 +70,10 @@ export default function Result() {
       }
     }
 
-    const answersStr = sessionStorage.getItem('hdti_answers')
-      || localStorage.getItem('hdti_answers_backup');
-    if (answersStr) {
-      try {
-        const answers = JSON.parse(answersStr);
-        if (Object.keys(answers).length === 16) {
-          const { result, isEgg, eggType, matchRate, userVec } = calculateResult(answers);
-          const animal = animalsMap[result];
-          if (!animal) return null;
-          return { animal, matchRate, isSharedView: false, isEgg, eggType, userVec };
-        }
-      } catch (e) {
-        return null;
-      }
-    }
-
     return null;
   });
+
+  const hasCountedRef = useRef(false);
 
   useEffect(() => {
     if (!resultData) {
@@ -88,6 +91,18 @@ export default function Result() {
         matchRate: resultData.matchRate,
         timestamp: Date.now()
       }));
+
+      if (sessionStorage.getItem('hdti_counted') === '1') {
+        getAllCounts().then(allCounts => {
+          if (allCounts) {
+            const total = allCounts.reduce((sum, row) => sum + row.count, 0);
+            const animalCount = allCounts.find(r => r.animal_id === resultData.animal.id)?.count || 0;
+            setStats({ myCount: animalCount, total, percentage: total > 0 ? (animalCount / total * 100).toFixed(1) : null });
+          }
+        });
+        return;
+      }
+      sessionStorage.setItem('hdti_counted', '1');
 
       incrementAnimalCount(resultData.animal.id).then(myCount => {
         if (myCount !== null) {
@@ -638,14 +653,23 @@ export default function Result() {
               style={{ background: isEggResult ? theme.sectionBg : '#ffffff', borderColor: isEggResult ? theme.dividerColor : undefined }}
             >
               <h3 className="text-lg font-black mb-1" style={{ color: theme.headingColor }}>相似人格</h3>
-              <p className="text-[11px] font-mono tracking-wide mb-5" style={{ color: isEggResult ? theme.accent : '#8a9379' }}>SIMILAR TYPES · 与你最相近的横断山兽</p>
+              <p className="text-[11px] font-mono tracking-wide mb-3" style={{ color: isEggResult ? theme.accent : '#8a9379' }}>SIMILAR TYPES · 与你最相近的横断山兽</p>
+              {!isPreview && matchRate < 70 && (
+                <p className="text-xs mb-4 px-2 py-2 rounded-lg" style={{ color: '#5f6a52', background: '#f0f4eb' }}>
+                  你的特质比较均衡，和多种动物都有共鸣 ✦
+                </p>
+              )}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {(() => {
-                  const currentVec = animal.vector;
-                  const similar = animals
+                  const currentVec = (!isPreview && userVec) ? userVec : animal.vector;
+                  const dist = (a, b) => a.reduce((s, v, i) => s + Math.abs(v - b[i]), 0);
+                  const candidates = animals
                     .filter(a => a.id !== animal.id && a.vector)
-                    .map(a => ({ ...a, match: calcMatchRate(currentVec, a.vector) }))
-                    .sort((a, b) => b.match - a.match)
+                    .map(a => ({ ...a, _dist: dist(currentVec, a.vector) }));
+                  const maxDist = Math.max(...candidates.map(a => a._dist));
+                  const similar = candidates
+                    .map(a => ({ ...a, match: calcMatchRateRelative(a._dist, maxDist) }))
+                    .sort((a, b) => a._dist - b._dist)
                     .slice(0, 4);
                   return similar.map(a => (
                     <div
@@ -662,6 +686,9 @@ export default function Result() {
                       />
                       <div className="font-mono text-sm font-black" style={{ color: theme.headingColor }}>{a.code}</div>
                       <div className="text-xs mt-0.5" style={{ color: isEggResult ? theme.accent : '#8a9379' }}>{a.personalityName}</div>
+                      {!isPreview && userVec && (
+                        <div className="text-sm font-black mt-1.5" style={{ color: theme.headingColor }}>{a.match}%</div>
+                      )}
                     </div>
                   ));
                 })()}

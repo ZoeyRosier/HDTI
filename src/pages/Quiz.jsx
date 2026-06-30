@@ -18,6 +18,7 @@ function loadAnswers() {
 function saveAnswers(answers) {
   const json = JSON.stringify(answers);
   sessionStorage.setItem('hdti_answers', json);
+  sessionStorage.removeItem('hdti_counted');
   // 同步写入 localStorage 作为兜底（微信 webview 可能丢失 sessionStorage）
   localStorage.setItem('hdti_answers_backup', json);
 }
