@@ -652,47 +652,72 @@ export default function Result() {
               className="mt-6 rounded-[20px] border p-6"
               style={{ background: isEggResult ? theme.sectionBg : '#ffffff', borderColor: isEggResult ? theme.dividerColor : undefined }}
             >
-              <h3 className="text-lg font-black mb-1" style={{ color: theme.headingColor }}>相似人格</h3>
-              <p className="text-[11px] font-mono tracking-wide mb-3" style={{ color: isEggResult ? theme.accent : '#8a9379' }}>SIMILAR TYPES · 与你最相近的横断山兽</p>
-              {!isPreview && matchRate < 70 && (
-                <p className="text-xs mb-4 px-2 py-2 rounded-lg" style={{ color: '#5f6a52', background: '#f0f4eb' }}>
-                  你的特质比较均衡，和多种动物都有共鸣 ✦
-                </p>
-              )}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {(() => {
-                  const currentVec = (!isPreview && userVec) ? userVec : animal.vector;
-                  const dist = (a, b) => a.reduce((s, v, i) => s + Math.abs(v - b[i]), 0);
-                  const candidates = animals
-                    .filter(a => a.id !== animal.id && a.vector)
-                    .map(a => ({ ...a, _dist: dist(currentVec, a.vector) }));
-                  const maxDist = Math.max(...candidates.map(a => a._dist));
-                  const similar = candidates
-                    .map(a => ({ ...a, match: calcMatchRateRelative(a._dist, maxDist) }))
-                    .sort((a, b) => a._dist - b._dist)
-                    .slice(0, 4);
-                  return similar.map(a => (
-                    <div
-                      key={a.id}
-                      className="flex flex-col items-center text-center p-3 rounded-[14px] border transition-colors cursor-pointer"
-                      style={{ borderColor: isEggResult ? theme.dividerColor : undefined, background: isEggResult ? '#ffffff' : undefined }}
-                      onClick={() => navigate(`/result?r=${a.id}&preview=1`)}
-                    >
-                      <div className="text-[11px] mb-1" style={{ color: isEggResult ? theme.headingColor : '#8a9379' }}>{a.name}</div>
-                      <img
-                        src={`/animals_icon/${a.code.replace('?', '')}.png`}
-                        alt={a.name}
-                        className="w-12 h-12 object-contain mb-2"
-                      />
-                      <div className="font-mono text-sm font-black" style={{ color: theme.headingColor }}>{a.code}</div>
-                      <div className="text-xs mt-0.5" style={{ color: isEggResult ? theme.accent : '#8a9379' }}>{a.personalityName}</div>
-                      {!isPreview && userVec && (
-                        <div className="text-sm font-black mt-1.5" style={{ color: theme.headingColor }}>{a.match}%</div>
-                      )}
+              {(() => {
+                const currentVec = (!isPreview && userVec) ? userVec : animal.vector;
+                const dist = (a, b) => a.reduce((s, v, i) => s + Math.abs(v - b[i]), 0);
+                const candidates = animals
+                  .filter(a => a.id !== animal.id && a.vector)
+                  .map(a => ({ ...a, _dist: dist(currentVec, a.vector) }));
+                const maxDist = Math.max(...candidates.map(a => a._dist));
+                const sorted = candidates
+                  .map(a => ({ ...a, match: Math.round((1 - a._dist / maxDist) * 100) }))
+                  .sort((a, b) => a._dist - b._dist);
+
+                const renderCard = (a, showMatch) => (
+                  <div
+                    key={a.id}
+                    className="flex flex-col items-center text-center p-3 rounded-[14px] border transition-colors cursor-pointer"
+                    style={{ borderColor: isEggResult ? theme.dividerColor : undefined, background: isEggResult ? '#ffffff' : undefined }}
+                    onClick={() => navigate(`/result?r=${a.id}&preview=1`)}
+                  >
+                    <div className="text-[11px] mb-1" style={{ color: isEggResult ? theme.headingColor : '#8a9379' }}>{a.name}</div>
+                    <img
+                      src={`/animals_icon/${a.code.replace('?', '')}.png`}
+                      alt={a.name}
+                      className="w-12 h-12 object-contain mb-2"
+                    />
+                    <div className="font-mono text-sm font-black" style={{ color: theme.headingColor }}>{a.code}</div>
+                    <div className="text-xs mt-0.5" style={{ color: isEggResult ? theme.accent : '#8a9379' }}>{a.personalityName}</div>
+                    {showMatch && (
+                      <div className="text-sm font-black mt-1.5" style={{ color: theme.headingColor }}>{a.match <= 0 ? '≈0' : a.match}%</div>
+                    )}
+                  </div>
+                );
+
+                if (isPreview) {
+                  return (
+                    <>
+                      <h3 className="text-lg font-black mb-1" style={{ color: theme.headingColor }}>相似人格</h3>
+                      <p className="text-[11px] font-mono tracking-wide mb-3" style={{ color: isEggResult ? theme.accent : '#8a9379' }}>SIMILAR TYPES · 与你最相近的横断山兽</p>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        {sorted.slice(0, 4).map(a => renderCard(a, false))}
+                      </div>
+                    </>
+                  );
+                }
+
+                const closestTwo = sorted.slice(0, 2);
+                const farthestTwo = sorted.slice(-2).reverse();
+                return (
+                  <>
+                    <h3 className="text-lg font-black mb-1" style={{ color: theme.headingColor }}>灵魂近亲</h3>
+                    <p className="text-[11px] font-mono tracking-wide mb-3" style={{ color: isEggResult ? theme.accent : '#8a9379' }}>KINDRED SPIRITS · 和你气质最像的横断山兽</p>
+                    {matchRate < 70 && (
+                      <p className="text-xs mb-4 px-2 py-2 rounded-lg" style={{ color: '#5f6a52', background: '#f0f4eb' }}>
+                        你的特质比较均衡，和多种动物都有共鸣 ✦
+                      </p>
+                    )}
+                    <div className="grid grid-cols-2 gap-3 mb-6">
+                      {closestTwo.map(a => renderCard(a, true))}
                     </div>
-                  ));
-                })()}
-              </div>
+                    <h3 className="text-lg font-black mb-1" style={{ color: theme.headingColor }}>命运对角</h3>
+                    <p className="text-[11px] font-mono tracking-wide mb-3" style={{ color: isEggResult ? theme.accent : '#8a9379' }}>POLAR OPPOSITES · 和你反差最大的横断山兽</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      {farthestTwo.map(a => renderCard(a, true))}
+                    </div>
+                  </>
+                );
+              })()}
             </motion.div>
           )}
 
