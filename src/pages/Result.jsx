@@ -31,10 +31,10 @@ const IUCN_LABELS = { CR: '极危', EN: '濒危', VU: '易危', NT: '近危', LC
  * 根据稀有度百分比返回稀有度描述
  */
 function getRarityLabel(pct) {
-  if (pct <= 1) return '极稀有';
-  if (pct <= 5) return '稀有';
-  if (pct <= 10) return '珍稀';
-  return '特别';
+  if (pct < 0.5) return '罕见';
+  if (pct < 2) return '极稀有';
+  if (pct < 8) return '稀有';
+  return '珍稀';
 }
 
 export default function Result() {
@@ -81,8 +81,21 @@ export default function Result() {
       return;
     }
 
-    // 预览模式不计数、不加载统计
-    if (resultData.isPreview) return;
+    // 预览模式不计数，但加载统计（展示稀有度）
+    if (resultData.isPreview) {
+      getAllCounts().then(allCounts => {
+        if (allCounts) {
+          const total = allCounts.reduce((sum, row) => sum + row.count, 0);
+          const animalCount = allCounts.find(r => r.animal_id === resultData.animal.id)?.count || 0;
+          setStats({
+            myCount: animalCount,
+            total,
+            percentage: total > 0 ? (animalCount / total * 100).toFixed(1) : null
+          });
+        }
+      });
+      return;
+    }
 
     if (!resultData.isSharedView) {
       localStorage.setItem('hdti_result', JSON.stringify({
@@ -391,7 +404,7 @@ export default function Result() {
           )}
 
           {/* 稀有度 */}
-          {!isPreview && stats && stats.percentage && (
+          {stats && stats.percentage && (
             <div className="flex justify-center mb-6">
               <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-2">
                 <span className="text-sm">{isEggResult ? '🏆' : '🌿'}</span>

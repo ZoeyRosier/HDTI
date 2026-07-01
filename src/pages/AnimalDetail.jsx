@@ -4,7 +4,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { animalsMap } from '../data/animals';
 import { animalIconSrc } from '../utils/animalIcon';
 import { animalGradients, getIucnStyle } from '../utils/galleryMeta';
+import { getAllCounts } from '../utils/supabase';
 import { useI18n, LangToggle } from '../i18n';
+
+function getRarityLabel(pct) {
+  if (pct < 0.5) return '罕见';
+  if (pct < 2) return '极稀有';
+  if (pct < 8) return '稀有';
+  return '珍稀';
+}
 
 const DETAIL_DIMS = [
   { id: 0, code: 'D1', name: '探索倾向', category: '行为模型' },
@@ -30,6 +38,7 @@ export default function AnimalDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t, language, pickAnimal } = useI18n();
+  const [stats, setStats] = useState(null);
 
   const raw = animalsMap[id];
   const animal = useMemo(
@@ -47,6 +56,19 @@ export default function AnimalDetail() {
   useEffect(() => {
     if (!raw) navigate('/animals', { replace: true });
   }, [raw, navigate]);
+
+  useEffect(() => {
+    if (!raw) return;
+    getAllCounts().then(allCounts => {
+      if (allCounts) {
+        const total = allCounts.reduce((sum, row) => sum + row.count, 0);
+        const animalCount = allCounts.find(r => r.animal_id === raw.id)?.count || 0;
+        if (total > 0) {
+          setStats({ percentage: (animalCount / total * 100).toFixed(1) });
+        }
+      }
+    });
+  }, [raw]);
 
   if (!raw || !animal) return null;
 
@@ -126,6 +148,16 @@ export default function AnimalDetail() {
           <p className="text-base italic text-white/90">
             {t('result.quote', { quote: animal.quote })}
           </p>
+
+          {/* 稀有度标签 */}
+          {stats && stats.percentage && (
+            <div className="mt-4">
+              <span className="inline-flex items-center gap-1.5 bg-white/12 text-white/85 text-xs px-3.5 py-1.5 rounded-full">
+                <span>🌿</span>
+                仅 <b className="font-num">{stats.percentage}%</b> 的人是{animal.name} · {getRarityLabel(parseFloat(stats.percentage))}
+              </span>
+            </div>
+          )}
         </motion.div>
       </div>
 
