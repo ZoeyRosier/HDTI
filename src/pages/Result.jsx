@@ -215,13 +215,8 @@ export default function Result() {
     audio.volume = 0.4;
     audioRef.current = audio;
 
-    // 尝试自动播放（用户之前已有手势操作）
-    audio.play().then(() => {
-      setBgmPlaying(true);
-    }).catch(() => {
-      // 浏览器阻止了自动播放，等待用户手动点击
-      setBgmPlaying(false);
-    });
+    // 默认静音，用户手动点击开启
+    setBgmPlaying(false);
 
     return () => {
       audio.pause();
