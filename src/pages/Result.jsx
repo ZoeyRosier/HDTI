@@ -48,8 +48,10 @@ export default function Result() {
     const urlResult = readResultFromUrl();
 
     // 优先从 sessionStorage 计算（用户本人刚答完题）
-    const answersStr = sessionStorage.getItem('hdti_answers')
-      || localStorage.getItem('hdti_answers_backup');
+    // localStorage backup 仅在无 URL 参数时使用（WeChat WebView 兜底）
+    const sessionAnswers = sessionStorage.getItem('hdti_answers');
+    const answersStr = sessionAnswers
+      || (!urlResult && localStorage.getItem('hdti_answers_backup'));
     if (answersStr && (!urlResult || !urlResult.isPreview)) {
       try {
         const answers = JSON.parse(answersStr);
